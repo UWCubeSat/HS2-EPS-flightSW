@@ -14,6 +14,9 @@ Any software works should be under the submodule of this repository.
 - If you want to see the changes, any status on git, you can see it by `git status`
   With this command, you can also check which branch you are currently on.
 
+- If you want to stage your changes, you can do `git add <file>...`
+  You can check if your changes are staged by `git status`.
+
 - You can commit whenever you want from your branch (not main) by `git commit -m <message>`
   When you commit, it's nice to have descriptive message.
 
