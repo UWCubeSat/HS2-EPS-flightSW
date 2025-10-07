@@ -1,4 +1,0 @@
-[submodule "BatteryManager"]
-	path = BatteryManager
-	url = git@github.com:momoka17/HSL-EPS-BatteryManager.git
-	branch = main
