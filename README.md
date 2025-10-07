@@ -1,4 +1,4 @@
-# HSL-EFP-flightSW
+# HSL-EPS-flightSW
 
 This is the repository of Husky Satellite Lab EPS flight software.
 Any software works should be under the submodule of this repository.
