@@ -7,6 +7,7 @@ Any software works should be under the submodule of this repository.
 - Please do not push your code to main immediately.
     When you want to push your code, please make sure you push from your branch and create pull request, once you got approval from teammates, you can push your code to main.
 
+
 ## Tips
 - If you want to initiate a branch, please do `git checkout -b <branch-name>`
   If you just want to check out to the existing branch, you can just do `git checkout <branch-name>`
