@@ -23,5 +23,5 @@ Any software works should be under the submodule of this repository.
 - When you push the commit, just do `git push`
   If you push first time from your created branch, you should do `git push --set-upstream origin <branch-name>`
 
-- Check PR works...
+- Check PR
 
