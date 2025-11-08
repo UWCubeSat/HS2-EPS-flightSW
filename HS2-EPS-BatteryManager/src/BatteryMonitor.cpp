@@ -35,6 +35,11 @@ void report_status() {
     Serial.print("IAC ADC Current: ");
     Serial.print((float) iac);
     Serial.print(" mA");
+
+    int32_t ibat = get_Ibat();
+    Serial.print("Ibat ADC Current: ");
+    Serial.print((float) ibat);
+    Serial.print(" mA");
 }
 
 void printVBAT_LOWV() {
@@ -73,6 +78,12 @@ int32_t get_Iac() //Gets the input current
     return current;
 }
 
+int32_t get_Ibat() //Gets the battery current
+{
+    int16_t data = (int16_t)read16BitRegister(IBAT_ADC);
+    int32_t current = (int32_t) data * 2; 
+    return current;
+}
 // ----------------------Read Value functions---------------------------
 int readVfb_reg() {
     uint8_t regVal = read8BitRegister(CHARGE_VOLT_LIM);
