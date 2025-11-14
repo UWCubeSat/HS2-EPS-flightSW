@@ -1,7 +1,7 @@
-
 // Class for INT Status
-# include "BQ25756.h"
-# include "i2c.h"
+#include "FaultStatus.hpp"
+#include "BQ25756.h"
+#include "i2c.h"
 
 class FaultStatus: public BQ25756{
     public:
@@ -55,7 +55,7 @@ class FaultStatus: public BQ25756{
             return ((read8bitRegister(FAULT_MASK) >> 1) & 0x01) == 0;
         }
 
-        
+
 
 
 }
