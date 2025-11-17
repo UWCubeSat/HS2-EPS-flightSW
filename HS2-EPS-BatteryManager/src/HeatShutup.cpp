@@ -34,7 +34,7 @@ enum TS_T2_prcnt{
     T2_62p4
 };
 
-////Represents the four selectable TS percentages for T1
+//Represents the four selectable TS percentages for T1
 enum TS_T1_prcnt{
     T1_77p15,
     T1_75p32,
