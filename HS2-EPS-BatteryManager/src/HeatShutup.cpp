@@ -18,7 +18,7 @@ enum TS_T5_prcnt{
     T5_31p25
 };
 
-//Represents the four selectable TS percentages for T3
+// Represents the four selectable TS percentages for T3
 enum TS_T3_prcnt{
     T3_48p4,
     T3_44p8,
