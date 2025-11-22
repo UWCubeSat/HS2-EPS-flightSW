@@ -87,7 +87,7 @@ float TS_ADC (){
 
 // Enables the current JEITA profile
 void JEITA_enable (){
-    uint8_t readVal = read8BitRegister(0x1C);
+    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal|(0x02);
     writeRegister(0x1C, writeVal);
 } 
