@@ -139,7 +139,7 @@ void configure_TS_T5_Charging_Threshold (TS_T5_prcnt userInput){
     writeRegister (0x1B, writeVal);
 }
 
-//Adjusts the charging percentages of the T3 zone from four options
+// Adjusts the charging percentages of the T3 zone from four options
 // to adjust the temperature zone
 void configure_TS_T3_Charging_Threshold (TS_T3_prcnt userInput){
     uint8_t readVal = read8bitRegister(0x1B);
