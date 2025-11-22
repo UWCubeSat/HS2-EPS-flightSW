@@ -10,7 +10,7 @@ enum TS_LVL{
     TS_HOT
 };
 
-//Represents the four selectable TS percentages for T5
+// Represents the four selectable TS percentages for T5
 enum TS_T5_prcnt{
     T5_41p2,
     T5_37p7,
