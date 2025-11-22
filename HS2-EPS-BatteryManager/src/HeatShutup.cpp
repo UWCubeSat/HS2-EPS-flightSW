@@ -94,9 +94,9 @@ void JEITA_enable (){
 
 // Disables the current JEITA profile
 void JEITA_disable (){
-    uint8_t readVal = read8BitRegister(0x1C);
+    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal & ~(0x02);
-    writeRegister(0x1C, writeVal);
+    writeRegister(CHARGE_REGION_CONT, writeVal);
 }
 
 //Enables the Thermistor
