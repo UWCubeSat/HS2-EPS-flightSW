@@ -136,7 +136,7 @@ void configure_TS_T5_Charging_Threshold (TS_T5_prcnt userInput){
             writeVal = (writeVal & 0x3F)  | 0xC0;
             break;
     }
-    writeRegister (0x1B, writeVal);
+    writeRegister (CHARGE_THRESH_CONT, writeVal);
 }
 
 // Adjusts the charging percentages of the T3 zone from four options
