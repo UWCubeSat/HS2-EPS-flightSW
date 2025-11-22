@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include "BQ25756_reg.h"
 
-//Represents the levels of TS
+// Represents temperature levels of TS
 enum TS_LVL{
     TS_NORMAL,
     TS_WARM,
