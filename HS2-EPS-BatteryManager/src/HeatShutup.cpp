@@ -43,7 +43,9 @@ enum TS_T1_prcnt{
 };
 
 // Obtain the status of the Thermal Shutdown
-// Returns status based off of the set JEITA levels 
+// Returns 
+//         TS_LVL: Status based off of the set JEITA levels
+// 
 // This IC Jumps T4 so we will just return 4 as T5
 TS_LVL readTS_STAT(){
     TS_LVL tsTemp;
