@@ -214,5 +214,5 @@ void configure_TS_T1_Charging_Threshold (TS_T1_prcnt userInput){
             writeVal = (writeVal & 0xFC)  | 0x03;
             break;
     }
-    writeRegister (0x1B, writeVal);
+    writeRegister (CHARGE_THRESH_CONT, writeVal);
 }
