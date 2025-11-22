@@ -80,7 +80,8 @@ TS_LVL readTS_STAT(){
 }
 
 // Measures the voltage on the TS Pin and
-// returns as percentage of REGN
+// Return:
+//          float: Voltage on TS Pin as percentage of REGN
 float TS_ADC (){
     uint16_t tsADC = read16BitRegister(TS_ADC);
     float tsPercentage = (tsADC / 1024.0f) * 100;
