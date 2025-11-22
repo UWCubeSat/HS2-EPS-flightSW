@@ -108,9 +108,9 @@ void TS_enable (){
 
 //Disables the Thermistor
 void TS_disable (){
-    uint8_t readVal = read8BitRegister(0x1C);
+    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
     writeVal = readVal & ~(0x01);
-    writeRegister(0x1C, writeVal);
+    writeRegister(CHARGE_REGION_CONT, writeVal);
 }
 
 //Adjusts the charging percentages of the T5 zone from four options
