@@ -191,7 +191,7 @@ void configure_TS_T2_Charging_Threshold (TS_T2_prcnt userInput){
     writeRegister (0x1B, writeVal);
 }
 
-//Adjusts the charging percentages of the T1 zone from four options
+// Adjusts the charging percentages of the T1 zone from four options
 // to adjust the temperature zone
 void configure_TS_T1_Charging_Threshold (TS_T1_prcnt userInput){
     uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
