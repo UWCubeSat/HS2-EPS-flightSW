@@ -162,7 +162,7 @@ void configure_TS_T3_Charging_Threshold (TS_T3_prcnt userInput){
             writeVal = (writeVal & 0xCF)  | 0x30;
             break;
     }
-    writeRegister (0x1B, writeVal);
+    writeRegister (CHARGE_THRESH_CONT, writeVal);
 }
 
 // Adjusts the charging percentages of the T2 zone from four options
