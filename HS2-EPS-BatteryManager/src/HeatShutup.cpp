@@ -85,7 +85,7 @@ float TS_ADC (){
     return tsPercentage;
 }
 
-//Enables the current JEITA profile
+// Enables the current JEITA profile
 void JEITA_enable (){
     uint8_t readVal = read8BitRegister(0x1C);
     uint8_t writeVal = readVal|(0x02);
