@@ -3,30 +3,30 @@
 class BQ25756::BatteryMonitor {
     public:
         //TODO: Raspberry pi doesn't play well with Serial.print. Use dictionary, maps, etc...
-        void report_status() {
-            uint32_t voltage_ADC = get_Vac();
+        void reportStatus() {
+            int vac = getVac();
             Serial.print("VAC ADC Voltage: ");
-            Serial.print((float) voltage_ADC);
+            Serial.print(vac);
             Serial.println(" mV");
 
-            uint32_t Vbat = get_Vbat();
+            int vbat = getVbat();
             Serial.print("VBAT ADC Voltage: ");
-            Serial.print((float) Vbat);
+            Serial.print(vbat);
             Serial.println(" mV");
 
-            uint32_t Vfb = get_Vfb();
+            int vfb = getVfb();
             Serial.print("Vfb ADC Voltage: ");
-            Serial.print((float) Vfb);
+            Serial.print(vfb);
             Serial.println(" mV");
 
             int vrechg = readVrechg();
             Serial.print("Vrechg Voltage: ");
-            Serial.print((float) vrechg);
+            Serial.print(vrechg);
             Serial.println(" mV");
 
             int vbat_lowv = readVbat_lowv();
             Serial.print("Vbat Low Voltage Threshold: ");
-            Serial.print((float) vbat_lowv);
+            Serial.print(vbat_lowv);
             Serial.println(" mV");
 
             int ichg = readIchg();
@@ -34,15 +34,15 @@ class BQ25756::BatteryMonitor {
             Serial.print(ichg);
             Serial.println(" mA");
 
-            int32_t iac = get_Iac();
+            int iac = getIac();
             Serial.print("IAC ADC Current: ");
-            Serial.print((float) iac);
+            Serial.print(iac);
             Serial.print(" mA");
 
-            int32_t ibat = get_Ibat();
+            int ibat = getIbat();
             Serial.print("Ibat ADC Current: ");
-            Serial.print((float) ibat);
-            Serial.print(" mA");
+            Serial.print(ibat);
+            Serial.println(" mA");
         }
 
         void printVBAT_LOWV() {
@@ -53,52 +53,77 @@ class BQ25756::BatteryMonitor {
         }
     
     private:
-        uint32_t get_Vfb () 
+        
+        //Feedback Voltage
+        // Gets VFB ADC reading (Range: 0mV-2047mV)
+        // Return:
+        //          int: VFB ADC reading (mV)
+        int getVfb () 
         {
-        uint16_t data = read16BitRegister(VAC_ADC);
-        uint32_t voltage = data * 2;
-        return voltage;
+              uint16_t data = read16BitRegister(VFB_ADC);
+              int vfbValue = data * 2;
+              return vfbValue;
         }
 
-
-        uint32_t get_Vac () //Gets the input voltage
+        //Input Voltage
+        //Gets the VAC ADC Reading (Range: 0mV-65534mV)
+        //Return:
+        //          int: VAC ADC Reading (mv)
+        int getVac () 
         {
             uint16_t data = read16BitRegister(VAC_ADC);
-            uint32_t voltage = data * 2;
-            return voltage;
+            int vacValue = data * 2;
+            return vacValue;
         }
 
-        uint32_t get_Vbat() //Gets the battery voltage
+        //Battery Voltage
+        //Gets the VBAT ADC Reading (Range: 0mV-65534mV)
+        //Return:
+        //          int: VBAT ADC Reading (mv)
+        int getVbat() 
         {
-        uint16_t data = read16BitRegister(VBAT_ADC);
-        uint32_t voltage = data * 2;
-        return voltage;
+            uint16_t data = read16BitRegister(VBAT_ADC);
+            int vbatValue = data * 2;
+            return vbatValue;
         }
 
-        int32_t get_Iac() //Gets the input current
+        //Input Current
+        //Gets the IAC ADC Reading (Range: -20000mA - 20000mA)
+        //Return:
+        //          int: IAC ADC Reading (mA)
+        int getIac() 
         {
             int16_t data = (int16_t)read16BitRegister(IAC_ADC);
-            int32_t current = (int32_t) data * 8 / 10; 
-            return current;
+            int iacValue = (int) data * 8 / 10; 
+            return iacValue;
         }
 
-        int32_t get_Ibat() //Gets the battery current
+        //Battery Current
+        //Gets the IBAT ADC Reading (Range: -20000mA-20000mA)
+        //Return:
+        //          int: IBAT ADC Reading (mA)
+        int getIbat() 
         {
             int16_t data = (int16_t)read16BitRegister(IBAT_ADC);
-            int32_t current = (int32_t) data * 2; 
-            return current;
-        }
-        // ----------------------Read Value functions---------------------------
-        int readVfb_reg() {
-            uint8_t regVal = read8BitRegister(CHARGE_VOLT_LIM);
-            int value = regVal * 2 + 1504;
+            int ibatValue = (int) data * 2; 
+            return ibatValue;
+        }        
+        
+        /*FB Voltage Regulation Limit:
+        Range: 1504mV-1566mV 
+        Bit Step: 2mV
+        Offset: 1504mV*/
+        int getVfbReg() {
+            uint8_t data = read8BitRegister(CHARGE_VOLT_LIM);
+            int vfbRegValue = data * 2 + 1504;
             return value;
         }
 
+        
         int readVrechg() {
             uint8_t regVal = read8BitRegister(CHARGER_CONT);
             int option = (regVal >> 6) & 0x03; // Get the two bits related to Vrechg
-            int vfb_reg = readVfb_reg(); // Read Vfb_reg to get the base voltage
+            int vfb_reg = getVfbReg(); // Read Vfb_reg to get the base voltage
             float percentage = 0.0;
 
             switch (option) {
@@ -125,7 +150,7 @@ class BQ25756::BatteryMonitor {
         int readVbat_lowv() {
             uint8_t regVal = read8BitRegister(PRECHARGE_TERM_CONT);
             int option = (regVal >> 1) & 0x03; // Get the two bits related to Vbat_lowv
-            int vfb_reg = readVfb_reg(); // Read Vfb_reg to get the base voltage
+            int vfb_reg = getVfbReg(); // Read Vfb_reg to get the base voltage
             float percentage = 0.0;
 
             switch (option) {
