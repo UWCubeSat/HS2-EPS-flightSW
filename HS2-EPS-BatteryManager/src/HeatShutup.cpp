@@ -102,7 +102,8 @@ void JEITA_disable (){
     writeRegister(CHARGE_REGION_CONT, writeVal);
 }
 
-//Enables the Thermistor
+// Enables TS pin function control
+// This could applies to forward charging and reverse discharging modes
 void TS_enable (){
      uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
      uint8_t writeVal = readVal | (0x01);
