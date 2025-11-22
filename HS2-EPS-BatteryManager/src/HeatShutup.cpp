@@ -92,7 +92,7 @@ void JEITA_enable (){
     writeRegister(0x1C, writeVal);
 } 
 
-//Disables the current JEITA profile
+// Disables the current JEITA profile
 void JEITA_disable (){
     uint8_t readVal = read8BitRegister(0x1C);
     uint8_t writeVal = readVal & ~(0x02);
