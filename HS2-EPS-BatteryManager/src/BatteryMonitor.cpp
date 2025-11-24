@@ -43,6 +43,38 @@ class BQ25756::BatteryMonitor {
             Serial.print("Ibat ADC Current: ");
             Serial.print(ibat);
             Serial.println(" mA");
+
+            chargingStatus status = getChargingStatus();
+            Serial.print("Charging Status: ");
+            switch (status) {
+                case NOT_CHARGING:
+                    Serial.println("Not Charging");
+                    break;
+                case TRICKLE_CHARGE:
+                    Serial.println("Trickle Charge");
+                    break;
+                case PRE_CHARGE:
+                    Serial.println("Pre-Charge");
+                    break;
+                case FAST_CHARGE:
+                    Serial.println("Fast Charge");
+                    break;
+                case TAPER_CHARGE:
+                    Serial.println("Taper Charge");
+                    break;
+                case RESERVED:
+                    Serial.println("Reserved");
+                    break;
+                case TOP_OFF_TIMER_ACTIVE:
+                    Serial.println("Top-Off Timer Active");
+                    break;
+                case CHARGE_TERMINATION_DONE:
+                    Serial.println("Charge Termination Done");
+                    break;
+                default:
+                    Serial.println("Unknown Status");
+                    break;
+            }
         }
 
         void printVBAT_LOWV() {
@@ -116,10 +148,13 @@ class BQ25756::BatteryMonitor {
         int getVfbReg() {
             uint8_t data = read8BitRegister(CHARGE_VOLT_LIM);
             int vfbRegValue = data * 2 + 1504;
-            return value;
+            return vfbRegValue;
         }
 
+
         
+        //Battery auto-recharge threshold, as percentage of VFB_REG. 
+        //Reads CHARGER_CONT register
         int readVrechg() {
             uint8_t regVal = read8BitRegister(CHARGER_CONT);
             int option = (regVal >> 6) & 0x03; // Get the two bits related to Vrechg
@@ -147,6 +182,10 @@ class BQ25756::BatteryMonitor {
             return vrechg;
         }
 
+
+
+        //Battery threshold for PRECHG to FASTCHG transition, as percentage of VFB_REG
+        //Reads PRECHARGE_AND_TERMINATION_CONTROL register
         int readVbat_lowv() {
             uint8_t regVal = read8BitRegister(PRECHARGE_TERM_CONT);
             int option = (regVal >> 1) & 0x03; // Get the two bits related to Vbat_lowv
@@ -174,7 +213,13 @@ class BQ25756::BatteryMonitor {
             return vbat_lowv;
         }
 
+
+        //Fast Charge Current Regulation Limit with 5mΩ RBAT_SNS (battery sense resistor):
+        //Actual charge current is the lower of ICHG_REG and ICHG pin
+        //Range: 400mA-20000mA 
+        //Bit Step: 50mA
         int readIchg() {
+            // I2C REG0x03=[15:8], I2C REG0x02=[7:0]
             uint8_t regLsb = read8BitRegister(0x02);  // REG0x02 (LSB)
             uint8_t regMsb = read8BitRegister(0x03);  // REG0x03 (MSB)
             uint16_t reg = ((uint16_t)regMsb << 8) | regLsb;
@@ -187,40 +232,26 @@ class BQ25756::BatteryMonitor {
             return ichg;
         }
 
-        //TODO: Implement this using enums here, println in report_status
-        uint8_t get_chargingStatus()  //The current charging status
+        
+        
+        enum chargingStatus {
+            NOT_CHARGING = 0x00,
+            TRICKLE_CHARGE = 0x01,
+            PRE_CHARGE = 0x02,
+            FAST_CHARGE = 0x03,
+            TAPER_CHARGE = 0x04,
+            RESERVED = 0x05,
+            TOP_OFF_TIMER_ACTIVE = 0x06,
+            CHARGE_TERMINATION_DONE = 0x07
+        };
+        
+        //Gets current charging status
+        //Reading from CHARGER_STATUS_1 register
+        chargingStatus getChargingStatus()  
         {
             uint8_t data = read8BitRegister(CHARGER_STATUS_1);
             uint8_t bit2_0 = data & 0x07;
-            Serial.print("Charging Status: ");
-            switch (bit2_0)
-            {
-                case 0x00:
-                    Serial.println("Not Charging");
-                    break;
-                case 0x01:
-                    Serial.println("Trickle Charge (VFB < VBAT_SHORT)");
-                    break;
-                case 0x02:
-                    Serial.println("Pre-charge (VBAT_SHORT < VFB < VBAT_LOWV)");
-                    break;
-                case 0x03:
-                    Serial.println("Fast-charge (CC mode)");
-                    break;
-                case 0x04:
-                    Serial.println("Taper Charge (CV mode)");
-                    break;
-                case 0x05:
-                    Serial.println("Reserved");
-                    break;
-                case 0x06:
-                    Serial.println("Top-off Timer Active Charging");
-                    break;
-                case 0x07:
-                    Serial.println("Charge Termination Done");
-                    break;
-            }
-
-            return bit2_0;
+            chargingStatus status = static_cast<chargingStatus>(bit2_0);
+            return status;
         }
 };

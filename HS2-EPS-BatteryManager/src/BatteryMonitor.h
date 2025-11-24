@@ -7,3 +7,4 @@ int getVfb();
 int getIac();
 int getIbat();
 int getIchg();
+chargingStatus getChargingStatus();
