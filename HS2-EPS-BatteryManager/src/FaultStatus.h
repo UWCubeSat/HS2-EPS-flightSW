@@ -1,7 +1,8 @@
-#ifndef FAULT_STATUS_HPP
-#define FAULT_STATUS_HPP
+#ifndef FAULT_STATUS_H
+#define FAULT_STATUS_H
 
-#include "BQ25756.hpp"
+#include "BQ25756.h"
+
 class FaultStatus: public BQ25756{
     public:
         bool InputUnderVoltageFault();
@@ -12,4 +13,6 @@ class FaultStatus: public BQ25756{
         bool ChargeSafetyTimerFault();
         bool DRV_SUPPinFault();
 
-}
+};
+
+#endif

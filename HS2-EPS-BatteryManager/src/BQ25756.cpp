@@ -1,6 +1,6 @@
 // Outer class for BQ25756 should be included here
-#include <strlib.h>
-#include "i2c.h"
+#include "BQ25756.h"
+
 class BQ25756{
 public: 
     void getStatus(){

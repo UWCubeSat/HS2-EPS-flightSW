@@ -1,5 +1,8 @@
-#ifndef BATTERY_MANAGER_H
-#define BATTERY_MANAGER_H
+#ifndef BQ25756_H
+#define BQ25756_H
+
+#include "i2c.h"
+#include <strlib.h>
 
 class BQ25756 {
     public:
@@ -16,5 +19,7 @@ class BQ25756 {
                 void enableTS_ADC();
                 void enableVFB_ADC();
                 void enableAllADCControl();
-        }
-}
+        };
+};
+
+#endif

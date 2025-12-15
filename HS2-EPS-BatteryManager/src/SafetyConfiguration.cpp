@@ -1,5 +1,5 @@
 // Safety configuration setting
-#include "i2c.h"
+#include "SafetyConfiguration.h"
 
 class SafetyConfig: public BQ25756 {
     // Disable Watchdog timer control
@@ -9,6 +9,7 @@ class SafetyConfig: public BQ25756 {
         // Disable Watchdog timer control
         void disableWatchdogTimerControl()
         {
+            // Set Watchdog control(TIME_CONT[5:4]) 00b
             uint8_t currValue = read8bitRegister(TIME_CONT);
             uint8_t newValue = currValue & ~0x30;
             writeRegister(TIME_CONT, newValue);
