@@ -6,25 +6,27 @@
 class FaultStatus: public BQ25756{
     public:
 
-        // Check if Input under-voltage event produces INT pulse
-        // Return
-        //      bool: True if Input under-voltage event produces INT pulse
-
         /**
          * @brief Check Input Under-Voltage fault status.
          * 
          * Reads FAULT_MASK bit 7.
          * @returns
-         * 0 = Normal   1 = VIN_UV fault interrupt masked
+         * 0 = Input under-voltage event produces INT pulse
+         * 1 = Input under-voltage event does not produce INT pulse
          */
         bool InputUnderVoltageFault() 
         {
             return ((read8bitRegister(FAULT_MASK) >> 7) & 0x01) == 0; 
         }
 
-        // Check if Input over-voltage event produces INT pulse
-        // Return
-        //      bool: True if Input over-voltage event produces INT pulse
+        /**
+         * @brief Check if Input over-voltage event produces INT pulse
+         * 
+         * Reads FAULT_MASk bit 6.
+         * @returns
+         * 0 = Input over-voltage event produces INT pulse
+         * 1 = Input over-voltage event does not produce INT pulse
+        */
         bool InputOverVoltageFault()
         {
             return ((read8bitRegister(FAULT_MASK) >> 6) & 0x01) == 0; 
@@ -33,6 +35,13 @@ class FaultStatus: public BQ25756{
         // Check if Battery over-current event produces INT pulse
         // Return
         //      bool: True if Battery over-current event produces INT pulse
+        /**
+         * @brief Check Battery over-current fault status.
+         * 
+         * Reads FAULT_MASK bit 5.
+         * @returns
+         * 0 = Normal   1 = VIN_UV fault interrupt masked
+         */
         bool BatteryOverCurrentFault()
         {
             return ((read8bitRegister(FAULT_MASK) >> 5) & 0x01) == 0;
