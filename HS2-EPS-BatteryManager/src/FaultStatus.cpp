@@ -80,9 +80,6 @@ class FaultStatus: public BQ25756{
             return ((read8bitRegister(FAULT_MASK) >> 2) & 0x01) == 0;
         }
 
-        // Check if DRV_SUP pin fault produces INT pulse
-        // Return
-        //      bool: True if DRV_SUP pin fault produces INT pulse
         /**
          *  @brief Check if DRV_SUP pin fault produces INT pulse
          * 
@@ -94,8 +91,6 @@ class FaultStatus: public BQ25756{
         {
             return ((read8bitRegister(FAULT_MASK) >> 1) & 0x01) == 0;
         }
-
-
 
 
 }
