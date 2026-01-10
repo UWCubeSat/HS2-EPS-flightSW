@@ -1,5 +1,5 @@
 // Use Arduino I2C library <Wire.h>
-#include <Wire.h>
+#include "i2c.h"
 #include "BQ25756_reg.h"
 
 // Read register and get 8 bits data
