@@ -22,6 +22,17 @@ class SafetyConfig: public BQ25756 {
             return ((read8bitRegister(TIME_CONT) & 0x30) == 0);
         }
 
+        /** 
+         * @brief Return if MPPT is enabled
+         * 
+         * When MPPT is enabled, the ADC is controlled by the device, writes to REG2A are ignored
+         * @return Return true if MPPT is enabled, otherwise false
+         */
+        bool MPPTenabled() 
+        {
+            return ((read8bitRegister(MPPT_CONT) & 0x01) == 1);
+        }
+
         // Enable TS pin function control
         void EnableTSPinFunctionControl()
         {

@@ -7,6 +7,21 @@ public:
         Serial.println("BQ25756 is initialized")
     }
 
+    /**
+     *  @brief Reset register
+     * 
+     *  Reset all the registers to the default value 
+     *  by writing REG_RST to 1.
+     *  REG_RST goes back to 0 automatically after writing to 1.
+     */
+    void resetRegister()
+    {
+        uint8_t regRstVal = read8bitRegister(POW_PATH_REV_CONT);
+        uint8_t writeVal = regRstVal | 0x80;
+        writeRegister(POW_PATH_REV_CONT, writeVal);
+        
+    }
+
     class ADCControl{
         public:
             // Enable ADC Control
