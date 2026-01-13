@@ -9,6 +9,7 @@ class SafetyConfig: public BQ25756{
     public:
         void disableWatchdogTimerControl();
         bool WatchdogTimerControlDisabled();
+        bool MPPTenabled();
         void EnableTSPinFunctionControl();
         bool TSPinFunctionControlEnabled();
         bool MPPTINTFlagNormal();
