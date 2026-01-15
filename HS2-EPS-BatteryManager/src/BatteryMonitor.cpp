@@ -2,47 +2,13 @@
 
 class BQ25756::BatteryMonitor {
     public:
-        //TODO: Raspberry pi doesn't play well with Serial.print. Use dictionary, maps, etc...
         void reportStatus() {
-            int vac = getVac();
-            Serial.print("VAC ADC Voltage: ");
-            Serial.print(vac);
-            Serial.println(" mV");
-
-            int vbat = getVbat();
-            Serial.print("VBAT ADC Voltage: ");
-            Serial.print(vbat);
-            Serial.println(" mV");
-
-            int vfb = getVfb();
-            Serial.print("Vfb ADC Voltage: ");
-            Serial.print(vfb);
-            Serial.println(" mV");
-
-            int vrechg = readVrechg();
-            Serial.print("Vrechg Voltage: ");
-            Serial.print(vrechg);
-            Serial.println(" mV");
-
-            int vbat_lowv = readVbat_lowv();
-            Serial.print("Vbat Low Voltage Threshold: ");
-            Serial.print(vbat_lowv);
-            Serial.println(" mV");
-
-            int ichg = readIchg();
-            Serial.print("Charge Current Limit: ");
-            Serial.print(ichg);
-            Serial.println(" mA");
-
-            int iac = getIac();
-            Serial.print("IAC ADC Current: ");
-            Serial.print(iac);
-            Serial.print(" mA");
-
-            int ibat = getIbat();
-            Serial.print("Ibat ADC Current: ");
-            Serial.print(ibat);
-            Serial.println(" mA");
+            
+            for (const auto& [key, value] : getProperties()) {
+                Serial.print(key.c_str());
+                Serial.print(": ");
+                Serial.println(value);
+            }
 
             chargingStatus status = getChargingStatus();
             Serial.print("Charging Status: ");
@@ -75,6 +41,19 @@ class BQ25756::BatteryMonitor {
                     Serial.println("Unknown Status");
                     break;
             }
+        }
+
+        std::map<std::string, int> getProperties() {
+            std::map<std::string, int> properties;
+            properties["VAC"] = getVac();
+            properties["VBAT"] = getVbat();
+            properties["VFB"] = getVfb();
+            properties["VRECHG"] = readVrechg();
+            properties["VBAT_LOWV"] = readVbat_lowv();
+            properties["ICHG"] = readIchg();
+            properties["IAC"] = getIac();
+            properties["IBAT"] = getIbat();
+            return properties;
         }
 
         void printVBAT_LOWV() {
@@ -231,8 +210,6 @@ class BQ25756::BatteryMonitor {
             int ichg = ichg_value * 50;
             return ichg;
         }
-
-
 
         enum chargingStatus {
             NOT_CHARGING = 0x00,
