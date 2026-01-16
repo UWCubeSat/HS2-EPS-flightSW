@@ -2,7 +2,7 @@
 #include "BQ25756.h"
 
 void BQ25756::getStatus(){
-        Serial.println("BQ25756 is initialized")
+        Serial.println("BQ25756 is initialized");
 }
 
 // Enable ADC Control
