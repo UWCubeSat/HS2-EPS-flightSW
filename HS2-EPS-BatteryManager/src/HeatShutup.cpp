@@ -1,222 +1,226 @@
 #include <Wire.h>
 #include "BQ25756_reg.h"
 
-// Represents temperature levels of TS
-enum TS_LVL{
-    TS_NORMAL,
-    TS_WARM,
-    TS_COOL,
-    TS_COLD,
-    TS_HOT
-};
 
-// Represents the four selectable TS percentages for T5
-enum TS_T5_prcnt{
-    T5_41p2,
-    T5_37p7,
-    T5_34p375,
-    T5_31p25
-};
+class HeatShutup: public BQ25756{
+    public:
+        // Represents temperature levels of TS
+        enum TS_LVL{
+            TS_NORMAL,
+            TS_WARM,
+            TS_COOL,
+            TS_COLD,
+            TS_HOT
+        };
 
-// Represents the four selectable TS percentages for T3
-enum TS_T3_prcnt{
-    T3_48p4,
-    T3_44p8,
-    T3_41p2,
-    T3_37p7
-};
+        // Represents the four selectable TS percentages for T5
+        enum TS_T5_prcnt{
+            T5_41p2,
+            T5_37p7,
+            T5_34p375,
+            T5_31p25
+        };
 
-// Represents the four selectable TS percentages for T2
-enum TS_T2_prcnt{
-    T2_71p1,
-    T2_68p4,
-    T2_65p5,
-    T2_62p4
-};
+        // Represents the four selectable TS percentages for T3
+        enum TS_T3_prcnt{
+            T3_48p4,
+            T3_44p8,
+            T3_41p2,
+            T3_37p7
+        };
 
-//Represents the four selectable TS percentages for T1
-enum TS_T1_prcnt{
-    T1_77p15,
-    T1_75p32,
-    T1_73p25,
-    T1_71p1
-};
+        // Represents the four selectable TS percentages for T2
+        enum TS_T2_prcnt{
+            T2_71p1,
+            T2_68p4,
+            T2_65p5,
+            T2_62p4
+        };
 
-// Obtain the status of the Thermal Shutdown
-// Returns 
-//         TS_LVL: Status based off of the set JEITA levels
-// 
-// This IC Jumps T4 so we will just return 4 as T5
-TS_LVL readTS_STAT(){
-    TS_LVL tsTemp;
-    uint8_t readVal = read8bitRegister(CHARGER_STATUS_2);
-    readVal &= 0x70;
-    switch(readVal >> 4)
-    {
-        case 0:
-            tsTemp = TS_NORMAL;
-            break;
+        // Represents the four selectable TS percentages for T1
+        enum TS_T1_prcnt{
+            T1_77p15,
+            T1_75p32,
+            T1_73p25,
+            T1_71p1
+        };
 
-        case 1:
-            tsTemp = TS_WARM;
-            break;
+        // Obtain the status of the Thermal Shutdown
+        // Returns 
+        //         TS_LVL: Status based off of the set JEITA levels
+        // 
+        // This IC Jumps T4 so we will just return 4 as T5
+        TS_LVL readTS_STAT(){
+            TS_LVL tsTemp;
+            uint8_t readVal = read8bitRegister(CHARGER_STATUS_2);
+            readVal &= 0x70;
+            switch(readVal >> 4)
+            {
+                case 0:
+                    tsTemp = TS_NORMAL;
+                    break;
 
-        case 2:
-            tsTemp = TS_COOL;
-            break;
-    
-        case 3:
-            tsTEMP = TS_COLD;
-            break;
-    
-        case 4:
-            tsTEMP = TS_HOT;
-            break;
+                case 1:
+                    tsTemp = TS_WARM;
+                    break;
 
-        default:
-            return -1;
-    }
-    return tsTemp;
-}
+                case 2:
+                    tsTemp = TS_COOL;
+                    break;
+            
+                case 3:
+                    tsTEMP = TS_COLD;
+                    break;
+            
+                case 4:
+                    tsTEMP = TS_HOT;
+                    break;
 
-// Measures the voltage on the TS Pin and
-// Return:
-//          float: Voltage on TS Pin as percentage of REGN
-float TS_ADC (){
-    uint16_t tsADC = read16BitRegister(TS_ADC);
-    float tsPercentage = (tsADC / 1024.0f) * 100;
-    return tsPercentage;
-}
+                default:
+                    return -1;
+            }
+            return tsTemp;
+        }
 
-// Enables the current JEITA profile
-void JEITA_enable (){
-    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
-    uint8_t writeVal = readVal|(0x02);
-    writeRegister(CHARGE_REGION_CONT, writeVal);
-} 
+        // Measures the voltage on the TS Pin and
+        // Return:
+        //          float: Voltage on TS Pin as percentage of REGN
+        float TS_ADC (){
+            uint16_t tsADC = read16BitRegister(TS_ADC);
+            float tsPercentage = (tsADC / 1024.0f) * 100;
+            return tsPercentage;
+        }
 
-// Disables the current JEITA profile
-void JEITA_disable (){
-    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
-    uint8_t writeVal = readVal & ~(0x02);
-    writeRegister(CHARGE_REGION_CONT, writeVal);
-}
+        // Enables the current JEITA profile
+        void JEITA_enable (){
+            uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
+            uint8_t writeVal = readVal|(0x02);
+            writeRegister(CHARGE_REGION_CONT, writeVal);
+        } 
 
-// Enables TS pin function control
-// This could applies to forward charging and reverse discharging modes
-void TS_enable (){
-     uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
-     uint8_t writeVal = readVal | (0x01);
-     writeRegister(CHARGE_REGION_CONT, writeVal);
-}
+        // Disables the current JEITA profile
+        void JEITA_disable (){
+            uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
+            uint8_t writeVal = readVal & ~(0x02);
+            writeRegister(CHARGE_REGION_CONT, writeVal);
+        }
 
-//Disables the Thermistor
-void TS_disable (){
-    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
-    writeVal = readVal & ~(0x01);
-    writeRegister(CHARGE_REGION_CONT, writeVal);
-}
+        // Enables TS pin function control
+        // This could applies to forward charging and reverse discharging modes
+        void TS_enable (){
+            uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
+            uint8_t writeVal = readVal | (0x01);
+            writeRegister(CHARGE_REGION_CONT, writeVal);
+        }
 
-// Adjusts the charging percentages of the T5 zone from four options
-// to adjust the temperature zone
-void configure_TS_T5_Charging_Threshold (TS_T5_prcnt userInput){
-    uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
-    uint8_t writeVal = readVal;
-    switch(userInput)
-     {
-        case T5_41p2:
-            writeVal &= 0x3F;
-            break;
+        //Disables the Thermistor
+        void TS_disable (){
+            uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
+            writeVal = readVal & ~(0x01);
+            writeRegister(CHARGE_REGION_CONT, writeVal);
+        }
 
-        case T5_37p7:
-            writeVal = (writeVal & 0x3F) | 0x40;
-            break;
+        // Adjusts the charging percentages of the T5 zone from four options
+        // to adjust the temperature zone
+        void configure_TS_T5_Charging_Threshold (TS_T5_prcnt userInput){
+            uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
+            uint8_t writeVal = readVal;
+            switch(userInput)
+            {
+                case T5_41p2:
+                    writeVal &= 0x3F;
+                    break;
 
-        case T5_34p375:
-            writeVal = (writeVal & 0x3F) | 0x80;
-            break;
+                case T5_37p7:
+                    writeVal = (writeVal & 0x3F) | 0x40;
+                    break;
 
-        case T5_31p25:
-            writeVal = (writeVal & 0x3F)  | 0xC0;
-            break;
-    }
-    writeRegister (CHARGE_THRESH_CONT, writeVal);
-}
+                case T5_34p375:
+                    writeVal = (writeVal & 0x3F) | 0x80;
+                    break;
 
-// Adjusts the charging percentages of the T3 zone from four options
-// to adjust the temperature zone
-void configure_TS_T3_Charging_Threshold (TS_T3_prcnt userInput){
-    uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
-    uint8_t writeVal = readVal;
-    switch(userInput)
-     {
-        case T3_48p4:
-            writeVal &= 0xCF;
-            break;
+                case T5_31p25:
+                    writeVal = (writeVal & 0x3F)  | 0xC0;
+                    break;
+            }
+            writeRegister (CHARGE_THRESH_CONT, writeVal);
+        }
 
-        case T3_44p8:
-            writeVal = (writeVal & 0xCF) | 0x10;
-            break;
+        // Adjusts the charging percentages of the T3 zone from four options
+        // to adjust the temperature zone
+        void configure_TS_T3_Charging_Threshold (TS_T3_prcnt userInput){
+            uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
+            uint8_t writeVal = readVal;
+            switch(userInput)
+            {
+                case T3_48p4:
+                    writeVal &= 0xCF;
+                    break;
 
-        case T3_41p2:
-            writeVal = (writeVal & 0xCF) | 0x20;
-            break;
+                case T3_44p8:
+                    writeVal = (writeVal & 0xCF) | 0x10;
+                    break;
 
-        case T3_37p7:
-            writeVal = (writeVal & 0xCF)  | 0x30;
-            break;
-    }
-    writeRegister (CHARGE_THRESH_CONT, writeVal);
-}
+                case T3_41p2:
+                    writeVal = (writeVal & 0xCF) | 0x20;
+                    break;
 
-// Adjusts the charging percentages of the T2 zone from four options
-// to adjust the temperature zone
-void configure_TS_T2_Charging_Threshold (TS_T2_prcnt userInput){
-    uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
-    uint8_t writeVal = readVal;
-    switch(userInput)
-     {
-        case T2_71p1:
-            writeVal &= 0xF3;
-            break;
+                case T3_37p7:
+                    writeVal = (writeVal & 0xCF)  | 0x30;
+                    break;
+            }
+            writeRegister (CHARGE_THRESH_CONT, writeVal);
+        }
 
-        case T2_68p4:
-            writeVal = (writeVal & 0xF3) | 0x04;
-            break;
+        // Adjusts the charging percentages of the T2 zone from four options
+        // to adjust the temperature zone
+        void configure_TS_T2_Charging_Threshold (TS_T2_prcnt userInput){
+            uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
+            uint8_t writeVal = readVal;
+            switch(userInput)
+            {
+                case T2_71p1:
+                    writeVal &= 0xF3;
+                    break;
 
-        case T2_65p5:
-            writeVal = (writeVal & 0xF3) | 0x08;
-            break;
+                case T2_68p4:
+                    writeVal = (writeVal & 0xF3) | 0x04;
+                    break;
 
-        case T2_62p4:
-            writeVal = (writeVal & 0xF3)  | 0x0C;
-            break;
-    }
-    writeRegister (CHARGE_THRESH_CONT, writeVal);
-}
+                case T2_65p5:
+                    writeVal = (writeVal & 0xF3) | 0x08;
+                    break;
 
-// Adjusts the charging percentages of the T1 zone from four options
-// to adjust the temperature zone
-void configure_TS_T1_Charging_Threshold (TS_T1_prcnt userInput){
-    uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
-    uint8_t writeVal = readVal;
-    switch(userInput)
-     {
-        case T1_77p15:
-            writeVal &= 0xFC;
-            break;
+                case T2_62p4:
+                    writeVal = (writeVal & 0xF3)  | 0x0C;
+                    break;
+            }
+            writeRegister (CHARGE_THRESH_CONT, writeVal);
+        }
 
-        case T1_75p32:
-            writeVal = (writeVal & 0xFC) | 0x01;
-            break;
+        // Adjusts the charging percentages of the T1 zone from four options
+        // to adjust the temperature zone
+        void configure_TS_T1_Charging_Threshold (TS_T1_prcnt userInput){
+            uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
+            uint8_t writeVal = readVal;
+            switch(userInput)
+            {
+                case T1_77p15:
+                    writeVal &= 0xFC;
+                    break;
 
-        case T1_73p25:
-            writeVal = (writeVal & 0xFC) | 0x02;
-            break;
+                case T1_75p32:
+                    writeVal = (writeVal & 0xFC) | 0x01;
+                    break;
 
-        case T1_71p1:
-            writeVal = (writeVal & 0xFC)  | 0x03;
-            break;
-    }
-    writeRegister (CHARGE_THRESH_CONT, writeVal);
+                case T1_73p25:
+                    writeVal = (writeVal & 0xFC) | 0x02;
+                    break;
+
+                case T1_71p1:
+                    writeVal = (writeVal & 0xFC)  | 0x03;
+                    break;
+            }
+            writeRegister (CHARGE_THRESH_CONT, writeVal);
+        }
 }
