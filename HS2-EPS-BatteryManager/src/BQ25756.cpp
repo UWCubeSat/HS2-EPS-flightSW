@@ -1,8 +1,8 @@
 // Outer class for BQ25756 should be included here
 #include "BQ25756.h"
 
-void BQ25756::getStatus(){
-        Serial.println("BQ25756 is initialized")
+void BQ25756::printInitializationStatus(){
+        Serial.println("BQ25756 is initialized");
 }
 
 // Enable ADC Control
@@ -10,7 +10,7 @@ void BQ25756::getStatus(){
 void BQ25756::ADCControl::enableADC()
 {
             uint8_t currVal = read8bitRegister(ADC_CONT);
-            uint8_t newVal = currVal & 0x80;
+            uint8_t newVal = currVal | 0x80;
             writeRegister(ADC_CONT, newVal);
 }
 
@@ -23,17 +23,17 @@ bool BQ25756::ADCControl::ADCEnabled()
 
 // Get ADC conversion rate
 // Return
-//      bool: True if Continuous conversion, False if One-shot conversion
+//      bool: True if One-shot conversion, False if Continuous conversion
 bool BQ25756::ADCControl::getADCRate()
 {
-    return (read8bitRegister(ADC_CONT) >> 6) == 0;
+    return (read8bitRegister(ADC_CONT) >> 6);
 }
 
 // Enable IAC ADC Control
 void BQ25756::ADCControl::enableIAC_ADC()
 {
     uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
-    uint8_t newVal = currVal & 0x3F;
+    uint8_t newVal = currVal & 0x7F;
     writeRegister(ADC_CHANNEL_CONT, newVal);
 }
 
