@@ -1,7 +1,7 @@
 // Outer class for BQ25756 should be included here
 #include "BQ25756.h"
 
-void BQ25756::printInitializationStatus(){
+void BQ25756::getStatus(){
         Serial.println("BQ25756 is initialized");
 }
 
