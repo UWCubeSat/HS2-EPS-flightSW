@@ -8,7 +8,7 @@
 
 class BQ25756 {
     public:
-        void printInitializationStatus();
+        void getStatus();
         class ADCControl {
             public:
                 void enableADC();
