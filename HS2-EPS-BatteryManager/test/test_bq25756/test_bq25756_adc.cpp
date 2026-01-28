@@ -3,10 +3,10 @@
 #include "BQ25756.h"
 BQ25756 bq;
 
+// ADC control state for BQ25756
 struct ADCControlState {
   bool adc_enabled;
   bool adc_rate_oneshot;
-
   bool ibat_disabled;
   bool iac_disabled;
   bool vac_disabled;
@@ -15,6 +15,7 @@ struct ADCControlState {
   bool vfb_disabled;
 };
 
+// Get ADC control state by reading registers
 static ADCControlState readADCControlState()
 {
   ADCControlState s{};
@@ -30,6 +31,7 @@ static ADCControlState readADCControlState()
   return s;
 }
 
+// Print ADC control state showing enabled or disabled
 static void printADCControlState(const ADCControlState& s)
 {
   printf(
@@ -45,6 +47,13 @@ static void printADCControlState(const ADCControlState& s)
 );
 }
 
+// Print function
+void print_state()
+{
+  printADCControlState(readADCControlState());
+}
+
+// Test BQ25756:ADCControl:enableADC()
 void test_ADC_enable()
 {
   printf("\n[TEST] ADC Enable\n");
@@ -58,6 +67,7 @@ void test_ADC_enable()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:enableIAC_ADC()
 void test_enableIAC_ADC()
 {
   printf("\n[TEST] IAC ADC Enable\n");
@@ -71,6 +81,7 @@ void test_enableIAC_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:enableIBAT_ADC()
 void test_enableIBAT_ADC()
 {
   printf("\n[TEST] IBAT ADC Enable\n");
@@ -84,6 +95,7 @@ void test_enableIBAT_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:enableVAC_ADC()
 void test_enableVAC_ADC()
 {
   printf("\n[TEST] VAC ADC Enable\n");
@@ -97,6 +109,7 @@ void test_enableVAC_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:enableVBAT_ADC()
 void test_enableVBAT_ADC()
 {
   printf("\n[TEST] VBAT ADC Enable\n");
@@ -110,6 +123,7 @@ void test_enableVBAT_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:enableTS_ADC()
 void test_enableTS_ADC()
 {
   printf("\n[TEST] TS ADC Enable\n");
@@ -123,6 +137,7 @@ void test_enableTS_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:enableVFB_ADC()
 void test_enableVFB_ADC()
 {
   printf("\n[TEST] VFB ADC Enable\n");
@@ -136,6 +151,7 @@ void test_enableVFB_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:enableAllADCControl()
 void test_enableAllADCControl()
 {
   printf("\n[TEST] All ADC Control Enable\n");
@@ -149,6 +165,7 @@ void test_enableAllADCControl()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:disableADC()
 void test_ADC_disable()
 {
   printf("\n[TEST] ADC Disable\n");
@@ -162,6 +179,7 @@ void test_ADC_disable()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:disableIAC_ADC()
 void test_disableIAC_ADC()
 {
   printf("\n[TEST] IAC ADC Disable\n");
@@ -175,6 +193,7 @@ void test_disableIAC_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:disableIBAT_ADC()
 void test_disableIBAT_ADC()
 {
   printf("\n[TEST] IBAT ADC Disable\n");
@@ -188,6 +207,7 @@ void test_disableIBAT_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:disableVAC_ADC()
 void test_disableVAC_ADC()
 {
   printf("\n[TEST] VAC ADC Disable\n");
@@ -201,6 +221,7 @@ void test_disableVAC_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:disableVBAT_ADC()
 void test_disableVBAT_ADC()
 {
   printf("\n[TEST] VBAT ADC Disable\n");
@@ -214,6 +235,7 @@ void test_disableVBAT_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:disableTS_ADC()
 void test_disableTS_ADC()
 {
   printf("\n[TEST] TS ADC Disable\n");
@@ -227,6 +249,7 @@ void test_disableTS_ADC()
   printADCControlState(readADCControlState());
 }
 
+// Test BQ25756:ADCControl:disableVFB_ADC()
 void test_disableVFB_ADC()
 {
   printf("\n[TEST] VFB ADC Disable\n");

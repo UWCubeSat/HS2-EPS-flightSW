@@ -9,7 +9,7 @@ void BQ25756::printInitializationStatus(){
 //      bool: True if ADC control is enabled
 bool BQ25756::ADCControl::isADCEnabled()
 {
-    return (read8bitRegister(ADC_CONT) >> 7) == 1;
+    return (read8bitRegister(ADC_CONT) >> 7);
 }
 
 // Get ADC conversion rate
@@ -25,7 +25,7 @@ bool BQ25756::ADCControl::isADCRateOneshot()
 //      bool : True if IBAT ADC control is disabled, False otherwise
 bool BQ25756::ADCControl::isIBAT_ADCDisabled()
 {
-    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 6) && 0x01);
+    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 6) & 0x01);
 }
 
 // Check if IAC ADC is disabled
@@ -33,7 +33,7 @@ bool BQ25756::ADCControl::isIBAT_ADCDisabled()
 //      bool : True if IAC ADC disabled, False otherwise
 bool BQ25756::ADCControl::isIAC_ADCDisabled() 
 {
-    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 7) && 0x01);
+    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 7) & 0x01);
 }
 
 // Check if VAC ADC is disabled
@@ -41,7 +41,7 @@ bool BQ25756::ADCControl::isIAC_ADCDisabled()
 //      bool : True if VAC ADC disabled, False otherwise
 bool BQ25756::ADCControl::isVAC_ADCDisabled() 
 {
-    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 5) && 0x01);
+    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 5) & 0x01);
 }
 
 // Check if VBAT ADC is disabled
@@ -49,7 +49,7 @@ bool BQ25756::ADCControl::isVAC_ADCDisabled()
 //      bool : True if VBAT ADC disabled, False otherwise
 bool BQ25756::ADCControl::isVBAT_ADCDisabled() 
 {
-    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 4) && 0x01);
+    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 4) & 0x01);
 }
 
 // Check if TS ADC is disabled
@@ -57,7 +57,7 @@ bool BQ25756::ADCControl::isVBAT_ADCDisabled()
 //      bool : True if TS ADC disabled, False otherwise
 bool BQ25756::ADCControl::isTS_ADCDisabled() 
 {
-    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 2) && 0x01);
+    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 2) & 0x01);
 }
 
 // Check if VFB ADC is disabled
@@ -65,7 +65,7 @@ bool BQ25756::ADCControl::isTS_ADCDisabled()
 //      bool : True if VFB ADC disabled, False otherwise
 bool BQ25756::ADCControl::isVFB_ADCDisabled() 
 {
-    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 1) && 0x01);
+    return ((read8bitRegister(ADC_CHANNEL_CONT) >> 1) & 0x01);
 }
 
 
@@ -76,7 +76,7 @@ bool BQ25756::ADCControl::isVFB_ADCDisabled()
 void BQ25756::ADCControl::enableADC()
 {
             uint8_t currVal = read8bitRegister(ADC_CONT);
-            uint8_t newVal = currVal | 0x80;
+            uint8_t newVal = currVal | (1 << 7);
             writeRegister(ADC_CONT, newVal);
 }
 
