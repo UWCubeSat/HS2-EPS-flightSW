@@ -5,6 +5,7 @@
 
 class BatteryMonitor : public BQ25756{
     public:
+        const char* toString(ChargingStatus status);
         std::map<std::string, int> getProperties();
     private:
         int getVac();

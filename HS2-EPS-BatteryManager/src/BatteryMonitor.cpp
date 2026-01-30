@@ -3,6 +3,35 @@
 class BQ25756::BatteryMonitor {
     public:
 
+        /**
+     * @brief Convert ChargingStatus enum to a string.
+     *
+     * This function maps each ChargingStatus enum value to a constant string
+     * for Serial printing.
+     *
+     * @param status  ChargingStatus enum value
+     * @return const char*  String of the charging state
+     */
+    const char* toString(ChargingStatus status) {
+      switch (status) {    
+           case ChargingStatus::NOT_CHARGING:
+                  return("Not Charging");
+           case ChargingStatus::TRICKLE_CHARGE:
+                  return("Trickle Charge");
+           case ChargingStatus::PRE_CHARGE:
+                  return("Pre-Charge");
+           case ChargingStatus::FAST_CHARGE:
+                  return("Fast Charge");
+           case ChargingStatus::TAPER_CHARGE:
+                  return("Taper Charge");
+           case ChargingStatus::RESERVED:
+                  return("Reserved");
+           case ChargingStatus::TOP_OFF_TIMER_ACTIVE:
+                  return("Top-Off Timer Active");
+           case ChargingStatus::CHARGE_TERMINATION_DONE:
+                  return("Charge Termination Done");
+
+      }
         /*@brief "Stores battery properties in a map for easy acccess"
 
           @return "Returns a map of battery properties and their values in millivolts or milliamps" 
