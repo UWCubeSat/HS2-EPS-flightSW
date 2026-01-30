@@ -1,12 +1,14 @@
 #ifndef BQ25756_H
 #define BQ25756_H
 
+#include <Arduino.h>
 #include "i2c.h"
-#include <strlib.h>
+#include "BQ25756_reg.h"
+
 
 class BQ25756 {
     public:
-        void get_status();
+        void printInitializationStatus();
         class ADCControl {
             public:
                 void enableADC();
@@ -20,6 +22,7 @@ class BQ25756 {
                 void enableVFB_ADC();
                 void enableAllADCControl();
         };
+    ADCControl adc;    
 };
 
 #endif
