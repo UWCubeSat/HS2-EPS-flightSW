@@ -2,47 +2,11 @@
 
 class BQ25756::BatteryMonitor {
     public:
-        void reportStatus() {
-            
-            for (const auto& [key, value] : getProperties()) {
-                Serial.print(key.c_str());
-                Serial.print(": ");
-                Serial.println(value);
-            }
 
-            chargingStatus status = getChargingStatus();
-            Serial.print("Charging Status: ");
-            switch (status) {
-                case NOT_CHARGING:
-                    Serial.println("Not Charging");
-                    break;
-                case TRICKLE_CHARGE:
-                    Serial.println("Trickle Charge");
-                    break;
-                case PRE_CHARGE:
-                    Serial.println("Pre-Charge");
-                    break;
-                case FAST_CHARGE:
-                    Serial.println("Fast Charge");
-                    break;
-                case TAPER_CHARGE:
-                    Serial.println("Taper Charge");
-                    break;
-                case RESERVED:
-                    Serial.println("Reserved");
-                    break;
-                case TOP_OFF_TIMER_ACTIVE:
-                    Serial.println("Top-Off Timer Active");
-                    break;
-                case CHARGE_TERMINATION_DONE:
-                    Serial.println("Charge Termination Done");
-                    break;
-                default:
-                    Serial.println("Unknown Status");
-                    break;
-            }
-        }
+        /*@brief "Stores battery properties in a map for easy acccess"
 
+          @return "Returns a map of battery properties and their values in millivolts or milliamps" 
+        */  
         std::map<std::string, int> getProperties() {
             std::map<std::string, int> properties;
             properties["VAC"] = getVac();
@@ -54,13 +18,6 @@ class BQ25756::BatteryMonitor {
             properties["IAC"] = getIac();
             properties["IBAT"] = getIbat();
             return properties;
-        }
-
-        void printVBAT_LOWV() {
-        uint8_t data = read8BitRegister(PRECHARGE_TERM_CONT);
-        uint8_t bit2_1Value = (data & 0x06) >> 1;
-        Serial.print("VBAT_LOW is");
-        Serial.println(bit2_1Value);
         }
 
     private:
@@ -211,7 +168,7 @@ class BQ25756::BatteryMonitor {
             return ichg;
         }
 
-        enum chargingStatus {
+        enum class ChargingStatus : uint8_t {
             NOT_CHARGING = 0x00,
             TRICKLE_CHARGE = 0x01,
             PRE_CHARGE = 0x02,
@@ -224,11 +181,11 @@ class BQ25756::BatteryMonitor {
 
         //Gets current charging status
         //Reading from CHARGER_STATUS_1 register
-        chargingStatus getChargingStatus()  
+        ChargingStatus getChargingStatus()  
         {
             uint8_t data = read8BitRegister(CHARGER_STATUS_1);
             uint8_t bit2_0 = data & 0x07;
-            chargingStatus status = static_cast<chargingStatus>(bit2_0);
+            ChargingStatus status = static_cast<ChargingStatus>(bit2_0);
             return status;
         }
 };

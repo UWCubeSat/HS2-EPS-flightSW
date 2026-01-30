@@ -5,9 +5,7 @@
 
 class BatteryMonitor : public BQ25756{
     public:
-        void report_status();
         std::map<std::string, int> getProperties();
-        void printVBAT_LOWV();
     private:
         int getVac();
         int getVbat();
@@ -18,5 +16,5 @@ class BatteryMonitor : public BQ25756{
         int readVrechg();
         int readVbat_lowv();
         int readIchg();
-        chargingStatus getChargingStatus();
+        ChargingStatus getChargingStatus();
 };
