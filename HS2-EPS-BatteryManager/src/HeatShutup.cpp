@@ -100,7 +100,7 @@ void BQ25756::HeatShutup::JEITA_enable (){
 } 
 
 // Disables the current JEITA profile
-void HeatShutup::JEITA_disable (){
+void BQ25756::HeatShutup::JEITA_disable (){
     uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal & ~(0x02);
     writeRegister(CHARGE_REGION_CONT, writeVal);
