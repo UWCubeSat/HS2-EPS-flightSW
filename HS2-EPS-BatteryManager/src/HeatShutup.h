@@ -4,7 +4,7 @@
 #include "BQ25756_reg.h"
 #include "i2c.h"
 
-class HeatShutup{
+class BQ25756::HeatShutup{
     public:
         enum TS_LVL {
             TS_NORMAL,
