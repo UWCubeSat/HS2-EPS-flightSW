@@ -123,7 +123,7 @@ void HeatShutup::TS_disable (){
 
 // Adjusts the charging percentages of the T5 zone from four options
 // to adjust the temperature zone
-void HeatShutup::configure_TS_T5_Charging_Threshold (TS_T5_prcnt userInput){
+void BQ25756::HeatShutup::configure_TS_T5_Charging_Threshold (TS_T5_prcnt userInput){
     uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
     uint8_t writeVal = readVal;
     switch(userInput)
