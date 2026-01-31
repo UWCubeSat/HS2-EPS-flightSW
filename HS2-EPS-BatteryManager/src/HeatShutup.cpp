@@ -115,7 +115,7 @@ void BQ25756::HeatShutup::TS_enable (){
 }
 
 //Disables the Thermistor
-void HeatShutup::TS_disable (){
+void BQ25756::HeatShutup::TS_disable (){
     uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal & ~(0x01);
     writeRegister(CHARGE_REGION_CONT, writeVal);
