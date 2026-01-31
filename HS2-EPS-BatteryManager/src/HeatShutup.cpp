@@ -108,7 +108,7 @@ void BQ25756::HeatShutup::JEITA_disable (){
 
 // Enables TS pin function control
 // This could applies to forward charging and reverse discharging modes
-void HeatShutup::TS_enable (){
+void BQ25756::HeatShutup::TS_enable (){
     uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal | (0x01);
     writeRegister(CHARGE_REGION_CONT, writeVal);
