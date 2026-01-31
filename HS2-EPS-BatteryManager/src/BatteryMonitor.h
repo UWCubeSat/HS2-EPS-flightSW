@@ -20,7 +20,7 @@ class BQ25756::BatteryMonitor{
         ChargingStatus getChargingStatus();
 };
 
-enum class BatteryMonitor::ChargingStatus : uint8_t {
+enum class BQ25756::BatteryMonitor::ChargingStatus : uint8_t {
     NOT_CHARGING = 0x00,
     TRICKLE_CHARGE = 0x01,
     PRE_CHARGE = 0x02,
