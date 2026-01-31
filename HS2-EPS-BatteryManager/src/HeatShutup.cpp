@@ -93,7 +93,7 @@ float BQ25756::HeatShutup::TS_ADC (){
 }
 
 // Enables the current JEITA profile
-void HeatShutup::JEITA_enable (){
+void BQ25756::HeatShutup::JEITA_enable (){
     uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal|(0x02);
     writeRegister(CHARGE_REGION_CONT, writeVal);
