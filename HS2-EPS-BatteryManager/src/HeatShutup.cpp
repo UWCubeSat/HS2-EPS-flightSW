@@ -201,7 +201,7 @@ void BQ25756::HeatShutup::configure_TS_T2_Charging_Threshold (TS_T2_prcnt userIn
 
 // Adjusts the charging percentages of the T1 zone from four options
 // to adjust the temperature zone
-void HeatShutup::configure_TS_T1_Charging_Threshold (TS_T1_prcnt userInput){
+void BQ25756::HeatShutup::configure_TS_T1_Charging_Threshold (TS_T1_prcnt userInput){
     uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
     uint8_t writeVal = readVal;
     switch(userInput)
