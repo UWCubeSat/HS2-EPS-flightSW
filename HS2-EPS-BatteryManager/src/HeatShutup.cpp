@@ -14,7 +14,7 @@ enum BQ25756::HeatShutup::TS_LVL{
 };
 
 // Represents the four selectable TS percentages for T5
-enum HeatShutup::TS_T5_prcnt{
+enum BQ25756::HeatShutup::TS_T5_prcnt{
     T5_41p2,
     T5_37p7,
     T5_34p375,
