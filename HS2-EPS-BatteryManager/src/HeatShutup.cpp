@@ -50,7 +50,7 @@ enum BQ25756::HeatShutup::TS_T1_prcnt{
 //         TS_LVL: Status based off of the set JEITA levels
 // 
 // This IC Jumps T4 so we will just return 4 as T5
-TS_LVL HeatShutup::readTS_STAT(){
+TS_LVL BQ25756::HeatShutup::readTS_STAT(){
     TS_LVL tsTemp;
     uint8_t readVal = read8bitRegister(CHARGER_STATUS_2);
     readVal &= 0x70;
