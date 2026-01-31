@@ -4,7 +4,7 @@
 
 
 // Represents temperature levels of TS
-enum HeatShutup::TS_LVL{
+enum BQ25756::HeatShutup::TS_LVL{
     TS_NORMAL,
     TS_WARM,
     TS_COOL,
