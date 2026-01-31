@@ -1,3 +1,4 @@
+#include "HeatShutup.h"
 #include <Wire.h>
 #include "BQ25756_reg.h"
 
