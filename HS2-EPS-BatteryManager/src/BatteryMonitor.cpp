@@ -1,8 +1,4 @@
 #include "BatteryMonitor.h"
-
-class BQ25756::BatteryMonitor {
-    public:
-
         /**
      * @brief Convert ChargingStatus enum to a string.
      *
@@ -12,7 +8,7 @@ class BQ25756::BatteryMonitor {
      * @param status  ChargingStatus enum value
      * @return const char*  String of the charging state
      */
-    const char* toString(ChargingStatus status) {
+    const char* BatteryMonitor::toString(ChargingStatus status) {
       switch (status) {    
            case ChargingStatus::NOT_CHARGING:
                   return("Not Charging");
@@ -30,13 +26,16 @@ class BQ25756::BatteryMonitor {
                   return("Top-Off Timer Active");
            case ChargingStatus::CHARGE_TERMINATION_DONE:
                   return("Charge Termination Done");
+            default:
+                  return("Unknown Status");
 
       }
+    }
         /*@brief "Stores battery properties in a map for easy acccess"
 
           @return "Returns a map of battery properties and their values in millivolts or milliamps" 
         */  
-        std::map<std::string, int> getProperties() {
+        std::map<std::string, int> BatteryMonitor::getProperties() {
             std::map<std::string, int> properties;
             properties["VAC"] = getVac();
             properties["VBAT"] = getVbat();
@@ -49,13 +48,12 @@ class BQ25756::BatteryMonitor {
             return properties;
         }
 
-    private:
 
         //Feedback Voltage
         // Gets VFB ADC reading (Range: 0mV-2047mV)
         // Return:
         //          int: VFB ADC reading (mV)
-        int getVfb () 
+        int BatteryMonitor::getVfb () 
         {
               uint16_t data = read16BitRegister(VFB_ADC);
               int vfbValue = data * 2;
@@ -66,7 +64,7 @@ class BQ25756::BatteryMonitor {
         //Gets the VAC ADC Reading (Range: 0mV-65534mV)
         //Return:
         //          int: VAC ADC Reading (mv)
-        int getVac () 
+        int BatteryMonitor::getVac () 
         {
             uint16_t data = read16BitRegister(VAC_ADC);
             int vacValue = data * 2;
@@ -77,7 +75,7 @@ class BQ25756::BatteryMonitor {
         //Gets the VBAT ADC Reading (Range: 0mV-65534mV)
         //Return:
         //          int: VBAT ADC Reading (mv)
-        int getVbat() 
+        int BatteryMonitor::getVbat() 
         {
             uint16_t data = read16BitRegister(VBAT_ADC);
             int vbatValue = data * 2;
@@ -88,7 +86,7 @@ class BQ25756::BatteryMonitor {
         //Gets the IAC ADC Reading (Range: -20000mA - 20000mA)
         //Return:
         //          int: IAC ADC Reading (mA)
-        int getIac() 
+        int BatteryMonitor::getIac() 
         {
             int16_t data = (int16_t)read16BitRegister(IAC_ADC);
             int iacValue = (int) data * 8 / 10; 
@@ -99,7 +97,7 @@ class BQ25756::BatteryMonitor {
         //Gets the IBAT ADC Reading (Range: -20000mA-20000mA)
         //Return:
         //          int: IBAT ADC Reading (mA)
-        int getIbat() 
+        int BatteryMonitor::getIbat() 
         {
             int16_t data = (int16_t)read16BitRegister(IBAT_ADC);
             int ibatValue = (int) data * 2; 
@@ -110,7 +108,7 @@ class BQ25756::BatteryMonitor {
         Range: 1504mV-1566mV 
         Bit Step: 2mV
         Offset: 1504mV*/
-        int getVfbReg() {
+        int BatteryMonitor::getVfbReg() {
             uint8_t data = read8BitRegister(CHARGE_VOLT_LIM);
             int vfbRegValue = data * 2 + 1504;
             return vfbRegValue;
@@ -120,7 +118,7 @@ class BQ25756::BatteryMonitor {
 
         //Battery auto-recharge threshold, as percentage of VFB_REG. 
         //Reads CHARGER_CONT register
-        int readVrechg() {
+        int BatteryMonitor::readVrechg() {
             uint8_t regVal = read8BitRegister(CHARGER_CONT);
             int option = (regVal >> 6) & 0x03; // Get the two bits related to Vrechg
             int vfb_reg = getVfbReg(); // Read Vfb_reg to get the base voltage
@@ -151,7 +149,7 @@ class BQ25756::BatteryMonitor {
 
         //Battery threshold for PRECHG to FASTCHG transition, as percentage of VFB_REG
         //Reads PRECHARGE_AND_TERMINATION_CONTROL register
-        int readVbat_lowv() {
+        int BatteryMonitor::readVbat_lowv() {
             uint8_t regVal = read8BitRegister(PRECHARGE_TERM_CONT);
             int option = (regVal >> 1) & 0x03; // Get the two bits related to Vbat_lowv
             int vfb_reg = getVfbReg(); // Read Vfb_reg to get the base voltage
@@ -183,7 +181,7 @@ class BQ25756::BatteryMonitor {
         //Actual charge current is the lower of ICHG_REG and ICHG pin
         //Range: 400mA-20000mA 
         //Bit Step: 50mA
-        int readIchg() {
+        int BatteryMonitor::readIchg() {
             // I2C REG0x03=[15:8], I2C REG0x02=[7:0]
             uint8_t regLsb = read16BitRegister(0x02);  // REG0x02 (LSB)
             uint8_t regMsb = read16BitRegister(0x03);  // REG0x03 (MSB)
@@ -197,24 +195,12 @@ class BQ25756::BatteryMonitor {
             return ichg;
         }
 
-        enum class ChargingStatus : uint8_t {
-            NOT_CHARGING = 0x00,
-            TRICKLE_CHARGE = 0x01,
-            PRE_CHARGE = 0x02,
-            FAST_CHARGE = 0x03,
-            TAPER_CHARGE = 0x04,
-            RESERVED = 0x05,
-            TOP_OFF_TIMER_ACTIVE = 0x06,
-            CHARGE_TERMINATION_DONE = 0x07
-        };
-
         //Gets current charging status
         //Reading from CHARGER_STATUS_1 register
-        ChargingStatus getChargingStatus()  
+        ChargingStatus BatteryMonitor::getChargingStatus()  
         {
             uint8_t data = read8BitRegister(CHARGER_STATUS_1);
             uint8_t bit2_0 = data & 0x07;
             ChargingStatus status = static_cast<ChargingStatus>(bit2_0);
             return status;
         }
-};
