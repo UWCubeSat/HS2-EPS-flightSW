@@ -40,6 +40,7 @@ class BQ25756 {
                 void disableTS_ADC();
                 void disableVFB_ADC();
         };
+        class HeatShutup;
     ADCControl adc;    
 };
 
