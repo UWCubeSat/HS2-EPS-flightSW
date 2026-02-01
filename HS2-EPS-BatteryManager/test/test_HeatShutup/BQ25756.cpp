@@ -194,4 +194,4 @@ void BQ25756::ADCControl::disableVFB_ADC()
     uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
     uint8_t newVal = currVal | (1 << 1);
     writeRegister(ADC_CHANNEL_CONT, newVal);
-}
+} 
