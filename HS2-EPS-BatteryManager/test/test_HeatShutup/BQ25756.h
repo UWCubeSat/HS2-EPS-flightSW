@@ -1,4 +1,3 @@
-
 #ifndef BQ25756_H
 #define BQ25756_H
 
