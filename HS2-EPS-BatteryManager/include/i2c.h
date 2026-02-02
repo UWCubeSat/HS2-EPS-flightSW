@@ -2,7 +2,6 @@
 #define I2C_H
 
 // Use I2C library for Arduino
-#include <Arduino.h>
 #include <Wire.h>
 #include "BQ25756_reg.h"
 
