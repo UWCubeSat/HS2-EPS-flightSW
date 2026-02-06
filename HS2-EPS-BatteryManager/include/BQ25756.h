@@ -1,7 +1,6 @@
 #ifndef BQ25756_H
 #define BQ25756_H
 
-#include <Arduino.h>
 #include "i2c.h"
 #include "BQ25756_reg.h"
 
@@ -39,6 +38,8 @@ class BQ25756 {
                 void disableTS_ADC();
                 void disableVFB_ADC();
         };
+        class BatteryMonitor;
+        class HeatShutup;
     ADCControl adc;    
 };
 

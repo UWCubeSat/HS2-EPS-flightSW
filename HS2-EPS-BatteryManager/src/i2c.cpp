@@ -1,6 +1,7 @@
 // Use Arduino I2C library <Wire.h>
 #include "i2c.h"
 #include "BQ25756_reg.h"
+#include <cstdio>    // This is for printf
 
 // Read register and get 8 bits data
 uint8_t read8bitRegister(uint8_t reg)
@@ -16,7 +17,7 @@ uint8_t read8bitRegister(uint8_t reg)
         data = Wire.read();                     // Read data from bbuffer
     } else 
     {
-        Serial.println("Data read: FAILED");
+        printf("Data read: FAILED");
     }
     return data;
 }
@@ -35,7 +36,7 @@ uint16_t read16BitRegister (uint8_t reg)
         uint16_t lsb = Wire.read();             // Read second 8bits data
         data = (msb << 8) | lsb;
     } else {
-        Serial.println("Data read: FAILED");
+        printf("Data read: FAILED");
     }
 
     return data;
