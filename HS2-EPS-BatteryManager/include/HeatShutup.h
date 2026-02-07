@@ -44,7 +44,7 @@ class BQ25756::HeatShutup{
         };
 
         TS_LVL readTS_STAT();
-        float TS_ADC();
+        float readTSVoltagePercent();
         void JEITA_enable();
         void JEITA_disable();
         void TS_enable();
