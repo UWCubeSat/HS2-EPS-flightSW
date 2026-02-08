@@ -1,13 +1,14 @@
 #ifndef BQ25756_H
 #define BQ25756_H
 
+#include <Arduino.h>
 #include "i2c.h"
 #include "BQ25756_reg.h"
 
 
 class BQ25756 {
     public:
-        void resetRegister();
+        void printInitializationStatus();
         class ADCControl {
             public:
                 // bool functions
@@ -21,7 +22,6 @@ class BQ25756 {
                 bool isVFB_ADCDisabled();
                 
                 // Enable ADC functions
-                void setADCContinuous();
                 void enableADC();
                 void enableIAC_ADC();
                 void enableIBAT_ADC();
@@ -40,9 +40,6 @@ class BQ25756 {
                 void disableTS_ADC();
                 void disableVFB_ADC();
         };
-        class BatteryMonitor;
-        class HeatShutup;
-        class SafetyConfig;
     ADCControl adc;    
 };
 
