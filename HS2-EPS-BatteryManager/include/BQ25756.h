@@ -43,6 +43,7 @@ class BQ25756 {
         class BatteryMonitor;
         class HeatShutup;
         class SafetyConfig;
+        class FaultStatus;
     ADCControl adc;    
 };
 

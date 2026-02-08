@@ -14,6 +14,7 @@ void BQ25756::resetRegister()
     writeRegister(POW_PATH_REV_CONT, writeVal);
     
 }
+
 // Return
 //      bool: True if ADC control is enabled
 bool BQ25756::ADCControl::isADCEnabled()
@@ -98,6 +99,16 @@ void BQ25756::ADCControl::enableADC()
     writeRegister(ADC_CONT, newVal);
 }
 
+// Enable All ADC Channel Control
+// This enable ADC Control for IAC, IBAT, VAC, VBAT, TS, VFB
+// This function should be called before reading any battery management register
+void BQ25756::ADCControl::enableAllADCControl()
+{
+    uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
+    uint8_t newVal = 0x00;
+    writeRegister(ADC_CHANNEL_CONT, newVal);
+}
+
 // Enable IAC ADC Control
 void BQ25756::ADCControl::enableIAC_ADC()
 {
@@ -143,16 +154,6 @@ void BQ25756::ADCControl::enableVFB_ADC()
 {
     uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
     uint8_t newVal = currVal & 0xFD;
-    writeRegister(ADC_CHANNEL_CONT, newVal);
-}
-
-// Enable All ADC Channel Control
-// This enable ADC Control for IAC, IBAT, VAC, VBAT, TS, VFB
-// This function should be called before reading any battery management register
-void BQ25756::ADCControl::enableAllADCControl()
-{
-    uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
-    uint8_t newVal = 0x00;
     writeRegister(ADC_CHANNEL_CONT, newVal);
 }
 

@@ -24,7 +24,7 @@ bool BQ25756::SafetyConfig::WatchdogTimerControlDisabled()
  * When MPPT is enabled, the ADC is controlled by the device, writes to REG2A are ignored
  * @return Return true if MPPT is enabled, otherwise false
  */
-bool MPPTenabled() 
+bool BQ25756::SafetyConfig::MPPTenabled() 
 {
     return ((read8bitRegister(MPPT_CONT) & 0x01) == 1);
 }
@@ -75,4 +75,11 @@ bool BQ25756::SafetyConfig::PGFlagNormal()
     return (((currValue >> 7) & 0x01) == 0);
 }
 
-// TODO: Interupt charging immediately
+// Stop charging battery immediately
+void BQ25756::SafetyConfig::interruptCharging()
+{
+    uint8_t currValue = read8bitRegister(CHARGER_CONT);
+    uint8_t newValue = currValue & ~(0x01);
+    writeRegister(CHARGER_CONT, newValue);
+}
+

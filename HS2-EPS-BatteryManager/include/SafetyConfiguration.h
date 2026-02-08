@@ -14,7 +14,8 @@ class BQ25756::SafetyConfig{
         bool TSPinFunctionControlEnabled();
         bool MPPTINTFlagNormal();
         bool TSFlagNormal();
-        bool PGFlagNormal();     
+        bool PGFlagNormal(); 
+        void interruptCharging();    
 };
 
 #endif
