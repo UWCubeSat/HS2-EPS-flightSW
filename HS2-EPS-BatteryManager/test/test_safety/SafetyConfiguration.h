@@ -10,12 +10,16 @@ class BQ25756::SafetyConfig{
         void disableWatchdogTimerControl();
         bool WatchdogTimerControlDisabled();
         void EnableTSPinFunctionControl();
+        void enableMPPT();
+        void disableMPPT();
         bool MPPTenabled(); 
         bool TSPinFunctionControlEnabled();
         bool MPPTINTFlagNormal();
         bool TSFlagNormal();
         bool PGFlagNormal(); 
-        void interruptCharging();    
+        bool chargeEnableControl();
+        void interruptCharging(); 
+        void enableCharging();   
 };
 
 #endif

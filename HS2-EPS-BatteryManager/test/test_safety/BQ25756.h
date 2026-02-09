@@ -7,7 +7,6 @@
 
 class BQ25756 {
     public:
-        void resetRegister();
         class ADCControl {
             public:
                 // bool functions
@@ -21,7 +20,6 @@ class BQ25756 {
                 bool isVFB_ADCDisabled();
                 
                 // Enable ADC functions
-                void setADCContinuous();
                 void enableADC();
                 void enableIAC_ADC();
                 void enableIBAT_ADC();
@@ -40,11 +38,11 @@ class BQ25756 {
                 void disableTS_ADC();
                 void disableVFB_ADC();
         };
-        class BatteryMonitor;
-        class HeatShutup;
         class SafetyConfig;
-        class FaultStatus;
-    ADCControl adc;    
+        BQ25756();
+
+    ADCControl adc;
+    SafetyConfig* sfconfig;    
 };
 
 #endif
