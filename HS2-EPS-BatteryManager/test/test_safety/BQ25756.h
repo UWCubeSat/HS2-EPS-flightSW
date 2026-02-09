@@ -1,14 +1,12 @@
 #ifndef BQ25756_H
 #define BQ25756_H
 
-#include <Arduino.h>
 #include "i2c.h"
 #include "BQ25756_reg.h"
 
 
 class BQ25756 {
     public:
-        void printInitializationStatus();
         class ADCControl {
             public:
                 // bool functions
@@ -40,7 +38,11 @@ class BQ25756 {
                 void disableTS_ADC();
                 void disableVFB_ADC();
         };
-    ADCControl adc;    
+        class SafetyConfig;
+        BQ25756();
+
+    ADCControl adc;
+    SafetyConfig* sfconfig;    
 };
 
 #endif

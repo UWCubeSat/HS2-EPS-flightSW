@@ -1,8 +1,10 @@
 // Outer class for BQ25756 should be included here
 #include "BQ25756.h"
+#include "SafetyConfiguration.h"
 
-void BQ25756::printInitializationStatus(){
-        Serial.println("BQ25756 is initialized");
+BQ25756::BQ25756()
+{
+    sfconfig = new SafetyConfig();
 }
 
 // Return
