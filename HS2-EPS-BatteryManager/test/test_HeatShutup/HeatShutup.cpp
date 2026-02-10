@@ -50,7 +50,7 @@ enum BQ25756::HeatShutup::TS_T1_prcnt{
 // Returns 
 //         TS_LVL: Status based off of the set JEITA levels
 // 
-// This IC Jumps T4 so we will just return 4 as T5
+// This IC Jumps T4 so we will go up to T5
 TS_LVL BQ25756::HeatShutup::readTS_STAT(){
     TS_LVL tsTemp;
     uint8_t readVal = read8bitRegister(CHARGER_STATUS_2);
@@ -87,7 +87,7 @@ TS_LVL BQ25756::HeatShutup::readTS_STAT(){
 // Measures the voltage on the TS Pin and
 // Return:
 //          float: Voltage on TS Pin as percentage of REGN
-float BQ25756::HeatShutup::TS_ADC (){
+float BQ25756::HeatShutup::TS_ADC_PRCNT (){
     uint16_t tsADC = read16BitRegister(TS_ADC);
     float tsPercentage = (tsADC / 1024.0f) * 100;
     return tsPercentage;
@@ -107,6 +107,11 @@ void BQ25756::HeatShutup::JEITA_disable (){
     writeRegister(CHARGE_REGION_CONT, writeVal);
 }
 
+//Checks if JEITA levels are disabled
+bool BQ25756::HeatShutup::isJEITADisabled(){
+    return !((read8BitRegister(CHARGE_REGION_CONT) >> 1) & 0x01);
+}
+
 // Enables TS pin function control
 // This could applies to forward charging and reverse discharging modes
 void BQ25756::HeatShutup::TS_enable (){
@@ -120,6 +125,11 @@ void BQ25756::HeatShutup::TS_disable (){
     uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal & ~(0x01);
     writeRegister(CHARGE_REGION_CONT, writeVal);
+}
+
+//Checks if TS is disabled
+bool BQ25756::HeatShutup::isTSdisabled(){
+    return !((read8BitRegister(CHARGE_REGION_CONT) >> 0) & 0x01);
 }
 
 // Adjusts the charging percentages of the T5 zone from four options
@@ -224,4 +234,12 @@ void BQ25756::HeatShutup::configure_TS_T1_Charging_Threshold (TS_T1_prcnt userIn
         break;
     }
     writeRegister (CHARGE_THRESH_CONT, writeVal);
+
+}
+
+void BQ25756::HeatShutup::reset_TS_lvl(){
+    configure_TS_T5_Charging_Threshold(T5_37p7);
+    configure_TS_T3_Charging_Threshold(T3_44p8);
+    configure_TS_T2_Charging_Threshold(T2_68p4);
+    configure_TS_T1_Charging_Threshold(T1_75p32);
 }
