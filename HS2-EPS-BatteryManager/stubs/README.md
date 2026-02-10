@@ -1,0 +1,1 @@
+This directory contains the dummy file to compile the code with <Wire.h>

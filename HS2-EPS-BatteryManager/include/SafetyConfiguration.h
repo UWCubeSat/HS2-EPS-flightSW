@@ -3,19 +3,19 @@
 
 #include "BQ25756_reg.h"
 #include "i2c.h"
+#include "BQ25756.h"
 
-
-class SafetyConfig: public BQ25756{
+class BQ25756::SafetyConfig{
     public:
         void disableWatchdogTimerControl();
         bool WatchdogTimerControlDisabled();
         void EnableTSPinFunctionControl();
+        bool MPPTenabled(); 
         bool TSPinFunctionControlEnabled();
         bool MPPTINTFlagNormal();
         bool TSFlagNormal();
-        bool PGFlagNormal();
+        bool PGFlagNormal(); 
+        void interruptCharging();    
 };
 
 #endif
-
-

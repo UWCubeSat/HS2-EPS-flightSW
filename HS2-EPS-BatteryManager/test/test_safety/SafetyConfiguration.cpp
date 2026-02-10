@@ -18,6 +18,23 @@ bool BQ25756::SafetyConfig::WatchdogTimerControlDisabled()
     return ((read8bitRegister(TIME_CONT) & 0x30) == 0);
 }
 
+
+// Disable MPPT
+void BQ25756::SafetyConfig::disableMPPT()
+{
+    uint8_t currValue = read8bitRegister(MPPT_CONT);
+    uint8_t newValue = currValue & ~(0x01);
+    writeRegister(MPPT_CONT, newValue);
+}
+
+// Enable MPPT
+void BQ25756::SafetyConfig::enableMPPT()
+{
+    uint8_t currValue = read8bitRegister(MPPT_CONT);
+    uint8_t newValue = currValue | 0x01;
+    writeRegister(MPPT_CONT, newValue);
+}
+
 /** 
  * @brief Return if MPPT is enabled
  * 
@@ -75,6 +92,14 @@ bool BQ25756::SafetyConfig::PGFlagNormal()
     return (((currValue >> 7) & 0x01) == 0);
 }
 
+// Check Charge enable status: EN_CHG
+// Return
+//      bool: True if enabled, otherwise false
+bool BQ25756::SafetyConfig::chargeEnableControl()
+{
+    return (read8bitRegister(CHARGER_CONT) & (0x01));
+}
+
 // Stop charging battery immediately
 void BQ25756::SafetyConfig::interruptCharging()
 {
@@ -82,4 +107,13 @@ void BQ25756::SafetyConfig::interruptCharging()
     uint8_t newValue = currValue & ~(0x01);
     writeRegister(CHARGER_CONT, newValue);
 }
+
+// Enable charging
+void BQ25756::SafetyConfig::enableCharging()
+{
+    uint8_t currValue = read8bitRegister(CHARGER_CONT);
+    uint8_t newValue = currValue | (0x01);
+    writeRegister(CHARGER_CONT, newValue);
+}
+
 
