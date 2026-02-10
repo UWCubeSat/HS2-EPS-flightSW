@@ -44,19 +44,18 @@ class BQ25756::HeatShutup{
         };
 
         TS_LVL readTS_STAT();
-        float TS_ADC_PRCNT();
+        float readTSVoltagePercent();
         void JEITA_enable();
         void JEITA_disable();
-        bool isJEITAdisabled();
         void TS_enable();
         void TS_disable();
-        bool isTSdisabled();
         void configure_TS_T5_Charging_Threshold (TS_T5_prcnt userInput);
         void configure_TS_T3_Charging_Threshold (TS_T3_prcnt userInput);
         void configure_TS_T2_Charging_Threshold (TS_T2_prcnt userInput);
         void configure_TS_T1_Charging_Threshold (TS_T1_prcnt userInput);
+        bool isJEITAdisabled();
+        bool isTSdisabled();
         void reset_TS_lvl();
-        
 
 };
 

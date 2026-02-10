@@ -89,7 +89,7 @@ BQ25756::HeatShutup::readTS_STAT(){
 // Return:
 //          float: Voltage on TS Pin as percentage of REGN
 float BQ25756::HeatShutup::readTSVoltagePercent(){
-    uint16_t tsADC = read16BitRegister(TS_ADC);
+    uint16_t tsADC = read16bitRegister(TS_ADC);
     float tsPercentage = (tsADC / 1024.0f) * 100;
     return tsPercentage;
 }
@@ -225,4 +225,22 @@ void BQ25756::HeatShutup::configure_TS_T1_Charging_Threshold (TS_T1_prcnt userIn
         break;
     }
     writeRegister (CHARGE_THRESH_CONT, writeVal);
+}
+
+
+//Checks if JEITA levels are disabled
+bool BQ25756::HeatShutup::isJEITAdisabled(){
+    return !((read8bitRegister(CHARGE_REGION_CONT) >> 1) & 0x01);
+}
+
+//Checks if TS is disabled
+bool BQ25756::HeatShutup::isTSdisabled(){
+    return !((read8bitRegister(CHARGE_REGION_CONT) >> 0) & 0x01);
+}
+
+void BQ25756::HeatShutup::reset_TS_lvl(){
+    configure_TS_T5_Charging_Threshold(T5_37p7);
+    configure_TS_T3_Charging_Threshold(T3_44p8);
+    configure_TS_T2_Charging_Threshold(T2_68p4);
+    configure_TS_T1_Charging_Threshold(T1_75p32);
 }

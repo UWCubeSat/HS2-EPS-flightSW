@@ -12,8 +12,8 @@ struct HsControlState {
 
 static HsControlState HsReadControlState() {
     HsControlState s{};
+    s.Hs_ts_adc = bq.hs.readTSVoltagePercent();
     s.ts_status = bq.hs.readTS_STAT();
-    s.Hs_ts_adc = bq.hs.TS_ADC_PRCNT();
     s.Hs_jeita_enabled = !bq.hs.isJEITAdisabled();
     s.Hs_ts_enabled = !bq.hs.isTSdisabled();
     return s;
@@ -118,13 +118,18 @@ void test_TS_ADC_PRCNT (){
     printHsControlState(HsReadControlState());
 }
 
+void test_readTSVoltagePercent()
+{
+    printf("\n[TEST] TS Voltage Percent\n");
+    float v = bq.hs.readTSVoltagePercent();
+    printf("TS_VOLT_PERCENT = %0.2f%%\n", v);
+}
+
 void test_readTS_STAT()
 {
     printf("\n[TEST] TS STATUS\n");
-
-    BQ25756::HeatShutup::TS_LVL status = bq.hs.readTS_STAT();
-
-    printf("TS_STAT = %s\n", tsLvlStr(status));
+    auto st = bq.hs.readTS_STAT();
+    printf("TS_STATUS = %s\n", tsLvlStr(st));
 }
 
 static const char* t5Str(BQ25756::HeatShutup::TS_T5_prcnt lvl)

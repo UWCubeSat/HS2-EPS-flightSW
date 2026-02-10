@@ -53,7 +53,7 @@ void setup(){
     delay(500);
 
     printf("Test TS ADC value\n");
-    test_readTS_STAT();
+    test_readTSVoltagePercent();
     delay(500);
 
     printf("Test TS T5 values\n");
