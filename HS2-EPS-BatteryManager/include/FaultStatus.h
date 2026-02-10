@@ -3,7 +3,7 @@
 
 #include "BQ25756.h"
 
-class FaultStatus: public BQ25756{
+class BQ25756::FaultStatus{
     public:
         bool InputUnderVoltageFault();
         bool InputOverVoltageFault();

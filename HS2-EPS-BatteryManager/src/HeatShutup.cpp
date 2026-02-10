@@ -4,54 +4,55 @@
 
 
 
-// Represents temperature levels of TS
-enum BQ25756::HeatShutup::TS_LVL{
-    TS_NORMAL,
-    TS_WARM,
-    TS_COOL,
-    TS_COLD,
-    TS_HOT,
-    TS_INVALID
-};
+// // Represents temperature levels of TS
+// enum BQ25756::HeatShutup::TS_LVL{
+//     TS_NORMAL,
+//     TS_WARM,
+//     TS_COOL,
+//     TS_COLD,
+//     TS_HOT,
+//     TS_INVALID
+// };
 
-// Represents the four selectable TS percentages for T5
-enum BQ25756::HeatShutup::TS_T5_prcnt{
-    T5_41p2,
-    T5_37p7,
-    T5_34p375,
-    T5_31p25
-};
+// // Represents the four selectable TS percentages for T5
+// enum BQ25756::HeatShutup::TS_T5_prcnt{
+//     T5_41p2,
+//     T5_37p7,
+//     T5_34p375,
+//     T5_31p25
+// };
 
-// Represents the four selectable TS percentages for T3
-enum BQ25756::HeatShutup::TS_T3_prcnt{
-    T3_48p4,
-    T3_44p8,
-    T3_41p2,
-    T3_37p7
-};
+// // Represents the four selectable TS percentages for T3
+// enum BQ25756::HeatShutup::TS_T3_prcnt{
+//     T3_48p4,
+//     T3_44p8,
+//     T3_41p2,
+//     T3_37p7
+// };
 
-// Represents the four selectable TS percentages for T2
-enum BQ25756::HeatShutup::TS_T2_prcnt{
-    T2_71p1,
-    T2_68p4,
-    T2_65p5,
-    T2_62p4
-};
+// // Represents the four selectable TS percentages for T2
+// enum BQ25756::HeatShutup::TS_T2_prcnt{
+//     T2_71p1,
+//     T2_68p4,
+//     T2_65p5,
+//     T2_62p4
+// };
 
-// Represents the four selectable TS percentages for T1
-enum BQ25756::HeatShutup::TS_T1_prcnt{
-    T1_77p15,
-    T1_75p32,
-    T1_73p25,
-    T1_71p1
-};
+// // Represents the four selectable TS percentages for T1
+// enum BQ25756::HeatShutup::TS_T1_prcnt{
+//     T1_77p15,
+//     T1_75p32,
+//     T1_73p25,
+//     T1_71p1
+// };
 
 // Obtain the status of the Thermal Shutdown
 // Returns 
 //         TS_LVL: Status based off of the set JEITA levels
 // 
 // This IC Jumps T4 so we will just return 4 as T5
-TS_LVL BQ25756::HeatShutup::readTS_STAT(){
+BQ25756::HeatShutup::TS_LVL
+BQ25756::HeatShutup::readTS_STAT(){
     TS_LVL tsTemp;
     uint8_t readVal = read8bitRegister(CHARGER_STATUS_2);
     readVal &= 0x70;
@@ -87,7 +88,7 @@ TS_LVL BQ25756::HeatShutup::readTS_STAT(){
 // Measures the voltage on the TS Pin and
 // Return:
 //          float: Voltage on TS Pin as percentage of REGN
-float BQ25756::HeatShutup::TS_ADC (){
+float BQ25756::HeatShutup::readTSVoltagePercent(){
     uint16_t tsADC = read16BitRegister(TS_ADC);
     float tsPercentage = (tsADC / 1024.0f) * 100;
     return tsPercentage;
@@ -95,14 +96,14 @@ float BQ25756::HeatShutup::TS_ADC (){
 
 // Enables the current JEITA profile
 void BQ25756::HeatShutup::JEITA_enable (){
-    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
+    uint8_t readVal = read8bitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal|(0x02);
     writeRegister(CHARGE_REGION_CONT, writeVal);
 } 
 
 // Disables the current JEITA profile
 void BQ25756::HeatShutup::JEITA_disable (){
-    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
+    uint8_t readVal = read8bitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal & ~(0x02);
     writeRegister(CHARGE_REGION_CONT, writeVal);
 }
@@ -110,14 +111,14 @@ void BQ25756::HeatShutup::JEITA_disable (){
 // Enables TS pin function control
 // This could applies to forward charging and reverse discharging modes
 void BQ25756::HeatShutup::TS_enable (){
-    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
+    uint8_t readVal = read8bitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal | (0x01);
     writeRegister(CHARGE_REGION_CONT, writeVal);
 }
 
 //Disables the Thermistor
 void BQ25756::HeatShutup::TS_disable (){
-    uint8_t readVal = read8BitRegister(CHARGE_REGION_CONT);
+    uint8_t readVal = read8bitRegister(CHARGE_REGION_CONT);
     uint8_t writeVal = readVal & ~(0x01);
     writeRegister(CHARGE_REGION_CONT, writeVal);
 }
