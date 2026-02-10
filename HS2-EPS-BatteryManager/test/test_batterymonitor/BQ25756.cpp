@@ -1,8 +1,18 @@
 // Outer class for BQ25756 should be included here
 #include "BQ25756.h"
-
-void BQ25756::printInitializationStatus(){
-        Serial.println("BQ25756 is initialized");
+/**
+ *  @brief Reset register
+ * 
+ *  Reset all the registers to the default value 
+ *  by writing REG_RST to 1.
+ *  REG_RST goes back to 0 automatically after writing to 1.
+ */
+void BQ25756::resetRegister()
+{
+    uint8_t regRstVal = read8bitRegister(POW_PATH_REV_CONT);
+    uint8_t writeVal = regRstVal | 0x80;
+    writeRegister(POW_PATH_REV_CONT, writeVal);
+    
 }
 
 // Return
@@ -71,13 +81,32 @@ bool BQ25756::ADCControl::isVFB_ADCDisabled()
 
 //------------------------------ Enable function-------------------------------------------
 
+// Set ADC rate continuous instead of One-shot conversion (default)
+// ADC rate should be continuous, otherwise ADC_EN is always cleared
+void BQ25756::ADCControl::setADCContinuous()
+{
+    uint8_t currVal = read8bitRegister(ADC_CONT);
+    uint8_t newVal = currVal & ~(1 << 6);
+    writeRegister(ADC_CONT, newVal);
+}
+
 // Enable ADC Control
 // ADC should be enabled before reading ADC value
 void BQ25756::ADCControl::enableADC()
 {
-            uint8_t currVal = read8bitRegister(ADC_CONT);
-            uint8_t newVal = currVal | (1 << 7);
-            writeRegister(ADC_CONT, newVal);
+    uint8_t currVal = read8bitRegister(ADC_CONT);
+    uint8_t newVal = currVal | (1 << 7);
+    writeRegister(ADC_CONT, newVal);
+}
+
+// Enable All ADC Channel Control
+// This enable ADC Control for IAC, IBAT, VAC, VBAT, TS, VFB
+// This function should be called before reading any battery management register
+void BQ25756::ADCControl::enableAllADCControl()
+{
+    uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
+    uint8_t newVal = 0x00;
+    writeRegister(ADC_CHANNEL_CONT, newVal);
 }
 
 // Enable IAC ADC Control
@@ -125,15 +154,6 @@ void BQ25756::ADCControl::enableVFB_ADC()
 {
     uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
     uint8_t newVal = currVal & 0xFD;
-    writeRegister(ADC_CHANNEL_CONT, newVal);
-}
-
-// Enable All ADC Channel Control
-// This enable ADC Control for IAC, IBAT, VAC, VBAT, TS, VFB
-void BQ25756::ADCControl::enableAllADCControl()
-{
-    uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
-    uint8_t newVal = 0x00;
     writeRegister(ADC_CHANNEL_CONT, newVal);
 }
 
