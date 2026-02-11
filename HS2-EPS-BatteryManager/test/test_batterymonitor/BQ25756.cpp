@@ -1,5 +1,7 @@
 // Outer class for BQ25756 should be included here
 #include "BQ25756.h"
+#include "BatteryMonitor.h"
+
 /**
  *  @brief Reset register
  * 
@@ -7,6 +9,12 @@
  *  by writing REG_RST to 1.
  *  REG_RST goes back to 0 automatically after writing to 1.
  */
+
+ BQ25756::BQ25756()
+{
+    batteryMonitor = new BatteryMonitor();
+}
+
 void BQ25756::resetRegister()
 {
     uint8_t regRstVal = read8bitRegister(POW_PATH_REV_CONT);

@@ -1,12 +1,15 @@
 // Write test code here and call the function in .ino file to run the test
 #include "BatteryMonitor.h"
+#include "test_BatteryMonitor.h"
 
 void reportStatus() {
+            int properties[8];
+            bq.batteryMonitor->getProperties(properties);
             
-            for (const auto& [key, value] : getProperties()) {
-                Serial.print(key.c_str());
+            for (size_t i = 0; i < properties.size(); i++) {
+                Serial.print(properties[i].key.c_str());
                 Serial.print(": ");
-                Serial.println(value);
+                Serial.println(properties[i].value);
             }
 
             ChargingStatus status = getChargingStatus();

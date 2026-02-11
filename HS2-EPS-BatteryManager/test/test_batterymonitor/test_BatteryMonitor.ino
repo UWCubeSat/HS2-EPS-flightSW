@@ -2,6 +2,8 @@
 #include "BQ25756.h"
 #include "BatteryMonitor.h"
 
+BQ25756 bq;
+
 
 void setup() {
     Serial.begin(9600);
@@ -14,9 +16,9 @@ void setup() {
     
     delay(500);
 
-    BQ25756::ADCControl::enableAllADCControl();
-    BQ25756::ADCControl::setADCContinuous();
-    BQ25756::ADCControl::enableADC();
+    bq.adc.enableAllADCControl();
+    bq.adcsetADCContinuous();
+    bq.adc.enableADC();
 
     delay(500);
 

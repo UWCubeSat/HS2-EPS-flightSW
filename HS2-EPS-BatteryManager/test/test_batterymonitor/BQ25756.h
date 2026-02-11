@@ -7,6 +7,7 @@
 
 class BQ25756 {
     public:
+         BQ25756();
         void resetRegister();
         class ADCControl {
             public:
@@ -41,6 +42,7 @@ class BQ25756 {
                 void disableVFB_ADC();
         };
         class BatteryMonitor;
+        BatteryMonitor* batteryMonitor;
         class HeatShutup;
         class SafetyConfig;
         class FaultStatus;

@@ -35,17 +35,15 @@
 
           @return "Returns a map of battery properties and their values in millivolts or milliamps" 
         */  
-        std::map<std::string, int> BQ25756::BatteryMonitor::getProperties() {
-            std::map<std::string, int> properties;
-            properties["VAC"] = getVac();
-            properties["VBAT"] = getVbat();
-            properties["VFB"] = getVfb();
-            properties["VRECHG"] = readVrechg();
-            properties["VBAT_LOWV"] = readVbat_lowv();
-            properties["ICHG"] = readIchg();
-            properties["IAC"] = getIac();
-            properties["IBAT"] = getIbat();
-            return properties;
+        void BQ25756::BatteryMonitor::getProperties(int properties[8]) {
+            properties[0] = getVac();      // VAC
+            properties[1] = getVbat();     // VBAT
+            properties[2] = getVfb();      // VFB
+            properties[3] = readVrechg();  // VRECHG
+            properties[4] = readVbat_lowv(); // VBAT_LOWV
+            properties[5] = readIchg();    // ICHG
+            properties[6] = getIac();      // IAC
+            properties[7] = getIbat();     // IBAT
         }
 
 
