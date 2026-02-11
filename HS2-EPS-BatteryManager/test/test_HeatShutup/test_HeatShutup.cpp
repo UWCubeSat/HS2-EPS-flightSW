@@ -53,6 +53,7 @@ void print_state()
     printHsControlState(HsReadControlState());
 }
 
+//works
 void test_JEITA_enable (){
     printf("\n[TEST] JEITA Enable\n");
 
@@ -65,10 +66,13 @@ void test_JEITA_enable (){
     printHsControlState(HsReadControlState());
 }
 
+//works
 void test_TS_enable(){
     printf("\n[TEST] TS Enable\n");
 
     printf("Before: ");
+    bq.adc.enableTS_ADC();
+    bq.adc.enableADC();
     printHsControlState(HsReadControlState());
 
     bq.hs.TS_enable();
@@ -77,6 +81,7 @@ void test_TS_enable(){
     printHsControlState(HsReadControlState());
 }
 
+//works
 void test_JEITA_disable (){
     printf("\n[TEST] JEITA Disable\n");
 
@@ -89,12 +94,14 @@ void test_JEITA_disable (){
     printHsControlState(HsReadControlState());
 }
 
+//works
 void test_is_JEITAdisabled(){
     printf("\n[TEST] is JEITA disabled\n");
     bool dis = bq.hs.isJEITAdisabled();
     printf("isJEITAdisabled() = %s\n", dis ? "TRUE" : "FALSE");
 }
 
+//works
 void test_TS_disable (){
     printf("\n[TEST] TS Disable\n");
 
@@ -107,17 +114,15 @@ void test_TS_disable (){
     printHsControlState(HsReadControlState());
 }
 
+//works
 void test_is_TSdisabled (){
     printf("\n[TEST] is TS disabled\n");
     bool dis = bq.hs.isTSdisabled();
     printf("isTSdisabled() = %s\n", dis ? "TRUE" : "FALSE");
 }
 
-void test_TS_ADC_PRCNT (){
-    printf("\n[TEST] TS ADC\n");
-    printHsControlState(HsReadControlState());
-}
-
+//doesn't work
+//returns: ?
 void test_readTSVoltagePercent()
 {
     printf("\n[TEST] TS Voltage Percent\n");
@@ -125,6 +130,7 @@ void test_readTSVoltagePercent()
     printf("TS_VOLT_PERCENT = %0.2f%%\n", v);
 }
 
+//works
 void test_readTS_STAT()
 {
     printf("\n[TEST] TS STATUS\n");
@@ -218,7 +224,7 @@ static void print_TS_levels(
 
 static void test_TS_levels(const char* tag = nullptr)
 {
-    uint8_t thresh = bq.read8bitRegister(CHARGE_THRESH_CONT);
+    uint8_t thresh = read8bitRegister(CHARGE_THRESH_CONT);
 
     auto t5 = static_cast<BQ25756::HeatShutup::TS_T5_prcnt>((thresh >> 6) & 0x03);
     auto t3 = static_cast<BQ25756::HeatShutup::TS_T3_prcnt>((thresh >> 4) & 0x03);
@@ -254,6 +260,7 @@ static void test_TS_levels(const char* tag = nullptr)
 
 }
 
+//works
 void test_configure_TS_T5_Charging_Threshold (BQ25756::HeatShutup::TS_T5_prcnt lvl){
     printf("\n[TEST] Set T5\n");
     test_TS_levels("Before");
@@ -263,6 +270,7 @@ void test_configure_TS_T5_Charging_Threshold (BQ25756::HeatShutup::TS_T5_prcnt l
     test_TS_levels("After");
 }
 
+//works
 void test_configure_TS_T3_Charging_Threshold (BQ25756::HeatShutup::TS_T3_prcnt lvl){
     printf("\n[TEST] Set T3\n");
     test_TS_levels("Before");
@@ -281,6 +289,7 @@ void test_configure_TS_T2_Charging_Threshold (BQ25756::HeatShutup::TS_T2_prcnt l
     test_TS_levels("After");
 }
 
+//works
 void test_configure_TS_T1_Charging_Threshold (BQ25756::HeatShutup::TS_T1_prcnt lvl){
     printf("\n[TEST] Set T1\n");
     test_TS_levels("Before");
@@ -290,6 +299,7 @@ void test_configure_TS_T1_Charging_Threshold (BQ25756::HeatShutup::TS_T1_prcnt l
     test_TS_levels("After");
 }
 
+//works
 void test_reset_TS_lvl(){
     printf("\n[TEST] Reset Jeita Levels\n");
     test_TS_levels("Before");

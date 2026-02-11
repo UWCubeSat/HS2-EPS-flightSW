@@ -10,7 +10,6 @@ void test_JEITA_disable ();
 void test_is_JEITAdisabled();
 void test_TS_disable ();
 void test_is_TSdisabled ();
-void test_TS_ADC_PRCNT ();
 void test_readTSVoltagePercent();
 void test_readTS_STAT();
 void test_configure_TS_T5_Charging_Threshold (BQ25756::HeatShutup::TS_T5_prcnt lvl);

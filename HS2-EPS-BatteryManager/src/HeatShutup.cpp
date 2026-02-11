@@ -89,7 +89,7 @@ BQ25756::HeatShutup::readTS_STAT(){
 // Return:
 //          float: Voltage on TS Pin as percentage of REGN
 float BQ25756::HeatShutup::readTSVoltagePercent(){
-    uint16_t tsADC = read16bitRegister(TS_ADC);
+    uint16_t tsADC = read16BitRegister(TS_ADC);
     float tsPercentage = (tsADC / 1024.0f) * 100;
     return tsPercentage;
 }
