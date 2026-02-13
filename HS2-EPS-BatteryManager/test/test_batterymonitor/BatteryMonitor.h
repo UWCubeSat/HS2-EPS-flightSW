@@ -9,6 +9,17 @@
 // This defines the nested class that was forward-declared in BQ25756.h
 class BQ25756::BatteryMonitor {
 public:
+    struct BatteryMeasurements {
+    int vac;
+    int vbat;
+    int vfb;
+    int vrechg;
+    int vbat_lowv;
+    int ichg;
+    int iac;
+    int ibat;
+    };
+
 
     // Define the enum INSIDE the class
     enum class ChargingStatus : uint8_t {
@@ -23,11 +34,13 @@ public:
     };
 
     const char* toString(ChargingStatus status);
-    void getProperties(int properties[8]);
+    BatteryMeasurements getMeasurements();
+    ChargingStatus getChargingStatus();
 
 private:
     int getVac();
     int getVbat();
+    int getVfbReg();
     int getVfb();
     int getIac();
     int getIbat();
@@ -35,7 +48,6 @@ private:
     int readVrechg();
     int readVbat_lowv();
     int readIchg();
-    ChargingStatus getChargingStatus();
 };
 
 #endif

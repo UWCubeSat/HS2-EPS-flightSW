@@ -12,7 +12,7 @@
 
  BQ25756::BQ25756()
 {
-    batteryMonitor = new BatteryMonitor();
+    bm = new BatteryMonitor();
 }
 
 void BQ25756::resetRegister()

@@ -22,21 +22,25 @@ uint8_t read8bitRegister(uint8_t reg)
 }
 
 // Read register and get 16 bits data
-uint16_t read16BitRegister (uint8_t reg) 
+uint16_t read16bitRegister (uint8_t reg) 
 {
     uint16_t data = 0;
     Wire.beginTransmission(I2C_BUS_ADDR);
     Wire.write(reg);
-    Wire.endTransmission(false);
 
-    Wire.requestFrom(I2C_BUS_ADDR, 2);          // Get 2 Bytes from SDA (Fetch it into buffer)
-    if (Wire.available()>= 2) {
-        uint16_t msb = Wire.read();             // Read first 8bits data
-        uint16_t lsb = Wire.read();             // Read second 8bits data
-        data = (msb << 8) | lsb;
-    } else {
-        Serial.println("Data read: FAILED");
+    if (Wire.endTransmission(false) != 0) {
+        Serial.println("I2C write failed");
+        return 0xFFFF;
     }
+
+    if (Wire.requestFrom((uint8_t)I2C_BUS_ADDR, (uint8_t)2) != 2) {
+        Serial.println("I2C read failed");
+        return 0xFFFF;
+    }
+
+    uint16_t lsb = Wire.read();             // Read first 8bits data [7:0]
+    uint16_t msb = Wire.read();             // Read second 8bits data [15:8]
+    data = (msb << 8) | lsb;
 
     return data;
 }

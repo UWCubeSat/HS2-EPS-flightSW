@@ -1,9 +1,6 @@
 #include <Wire.h>
 #include "BQ25756.h"
-#include "BatteryMonitor.h"
-
-BQ25756 bq;
-
+#include "test_BatteryMonitor.h"
 
 void setup() {
     Serial.begin(9600);
@@ -16,10 +13,8 @@ void setup() {
     
     delay(500);
 
-    bq.adc.enableAllADCControl();
-    bq.adcsetADCContinuous();
-    bq.adc.enableADC();
-
+    enableADCSequence();
+    
     delay(500);
 
     //Test the Monitor functions
