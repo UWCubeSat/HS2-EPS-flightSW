@@ -1,7 +1,7 @@
 // Write easy test code to test this library with arduino
 #include <Wire.h>
 #include "BQ25756.h"
-#include "test_safety.h"
+#include "test_faultstatus.h"
 
 // This is helper function to use printf in ino code
 int serial_putchar(char c, FILE* f)
@@ -26,30 +26,12 @@ void setup(){
     Wire.beginTransmission(0x6B);
     
     Serial.println("Startig I2C....");
-    
-    delay(500);
 
-    // Read current ADC control
-    printf("current state\n");
-    print_state();
-    delay(500);
-    test_disableWatchdogTimerControl();
-    delay(500);
-    // Check this function working
-    test_EnableTSPinFunctionControl();
-    delay(500);
-    test_enableMPPT();
-    delay(500);
-    test_disableMPPT();
-    delay(500);
-    test_interruptCharging();
-    delay(500);
-    test_enableCharging();
-    delay(500);
 }
 
 
 void loop() {
-    
+    print_state();
+    delay(500);
 
 }
