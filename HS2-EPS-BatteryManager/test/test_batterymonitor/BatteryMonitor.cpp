@@ -77,7 +77,7 @@ BatteryMeasurements BQ25756::BatteryMonitor::getMeasurements() {
 int BQ25756::BatteryMonitor::getVfb () 
 {
         uint16_t data = read16bitRegister(VFB_ADC);
-        int vfbValue = data * 2;
+        int vfbValue = data;
         return vfbValue;
 }
 
@@ -88,7 +88,7 @@ int BQ25756::BatteryMonitor::getVfb ()
 int BQ25756::BatteryMonitor::getVac () 
 {
     uint16_t data = read16bitRegister(VAC_ADC);
-    int vacValue = data * 2;
+    int vacValue = (int) data * 2; // TODO: We need to cast here?
     return vacValue;
 }
 
@@ -99,7 +99,7 @@ int BQ25756::BatteryMonitor::getVac ()
 int BQ25756::BatteryMonitor::getVbat() 
 {
     uint16_t data = read16bitRegister(VBAT_ADC);
-    int vbatValue = data * 2;
+    int vbatValue = (int) data * 2; // TODO: We need to cast here?
     return vbatValue;
 }
 
@@ -131,7 +131,7 @@ Bit Step: 2mV
 Offset: 1504mV*/
 int BQ25756::BatteryMonitor::getVfbReg() {
     uint16_t data = read16bitRegister(CHARGE_VOLT_LIM);
-    int vfbRegValue = data * 2 + 1504;
+    int vfbRegValue = (int) data * 2 + 1504; // TODO: Check, do we need to cast here?
     return vfbRegValue;
 }
 
@@ -212,7 +212,7 @@ int BQ25756::BatteryMonitor::readIchg() {
     uint16_t ichg_value = (reg >> 2) & 0x1FF;
 
     // Convert to current in mA (50mA per bit step)
-    int ichg = ichg_value * 50;
+    int ichg = (int) ichg_value * 50; // TODO: Check, do we need to cast here?
     return ichg;
 }
 
