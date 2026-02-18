@@ -9,7 +9,7 @@
 // This defines the nested class that was forward-declared in BQ25756.h
 class BQ25756::BatteryMonitor {
 public:
-
+  void BQ25756::BatteryMonitor::getProperties(int properties[8]);
     // Define the enum INSIDE the class
     enum class ChargingStatus : uint8_t {
         NOT_CHARGING = 0x00,
@@ -21,11 +21,7 @@ public:
         TOP_OFF_TIMER_ACTIVE = 0x06,
         CHARGE_TERMINATION_DONE = 0x07
     };
-
-    const char* toString(ChargingStatus status);
-    void getProperties(int properties[8]);
-
-private:
+    
     int getVac();
     int getVbat();
     int getVfb();
@@ -35,7 +31,10 @@ private:
     int readVrechg();
     int readVbat_lowv();
     int readIchg();
-    ChargingStatus getChargingStatus();
+    int getVfbReg();
+    BQ25756::BatteryMonitor::ChargingStatus getChargingStatus();
+    const char* BQ25756::BatteryMonitor::toString(BQ25756::BatteryMonitor::ChargingStatus);
 };
+
 
 #endif
