@@ -28,3 +28,9 @@ void printVBAT_LOWV() {
     Serial.print("VBAT_LOWV: ");
     Serial.println(bq.batteryMonitor->readVbat_lowv());
 }
+
+void enableCharging() {
+    uint8_t currValue = read8bitRegister(CHARGER_CONT);
+    uint8_t newValue = currValue | (0x01);
+    writeRegister(CHARGER_CONT, newValue);
+}

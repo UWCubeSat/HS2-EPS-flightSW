@@ -76,7 +76,7 @@
         int BQ25756::BatteryMonitor::getVbat() 
         {
             uint16_t data = read16BitRegister(VBAT_ADC);
-            int vbatValue = data * 2;
+            int vbatValue = (int)data * 2;
             return vbatValue;
         }
 

@@ -31,8 +31,8 @@ uint16_t read16BitRegister (uint8_t reg)
 
     Wire.requestFrom(I2C_BUS_ADDR, 2);          // Get 2 Bytes from SDA (Fetch it into buffer)
     if (Wire.available()>= 2) {
-        uint16_t msb = Wire.read();             // Read first 8bits data
-        uint16_t lsb = Wire.read();             // Read second 8bits data
+        uint16_t lsb = Wire.read();             // Read first 8bits data
+        uint16_t msb = Wire.read();             // Read second 8bits data
         data = (msb << 8) | lsb;
     } else {
         Serial.println("Data read: FAILED");

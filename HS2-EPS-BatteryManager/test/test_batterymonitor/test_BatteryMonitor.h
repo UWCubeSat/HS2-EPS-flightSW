@@ -3,3 +3,4 @@
 
 void printVBAT_LOWV();
 void reportStatus();
+void enableCharging();

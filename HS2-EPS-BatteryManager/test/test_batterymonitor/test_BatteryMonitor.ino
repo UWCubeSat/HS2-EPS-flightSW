@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include "BQ25756.h"
 #include "BatteryMonitor.h"
-
+#include "test_BatteryMonitor.h"
 BQ25756 bq;
 
 void reportStatus();
@@ -23,6 +23,8 @@ void setup() {
     reportStatus();
     delay(500);
     printVBAT_LOWV();
+    enableCharging();
+    delay(500);
 }
 
 void loop() { 
