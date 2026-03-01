@@ -23,7 +23,9 @@ class BQ25756 {
                 
                 // Enable ADC functions
                 void setADCContinuous();
+                void setADCOneShot();
                 void enableADC();
+                void enableADCReadingForOneshot(); 
                 void enableIAC_ADC();
                 void enableIBAT_ADC();
                 void enableVAC_ADC();
