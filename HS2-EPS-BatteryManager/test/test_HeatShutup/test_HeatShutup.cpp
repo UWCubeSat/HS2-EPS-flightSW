@@ -298,7 +298,6 @@ void test_configure_TS_T1_Charging_Threshold (BQ25756::HeatShutup::TS_T1_prcnt l
     test_TS_levels("After");
 }
 
-//works
 void test_reset_TS_lvl(){
     printf("\n[TEST] Reset Jeita Levels\n");
     test_TS_levels("Before");
