@@ -53,7 +53,6 @@ void print_state()
     printHsControlState(HsReadControlState());
 }
 
-//works
 void test_JEITA_enable (){
     printf("\n[TEST] JEITA Enable\n");
 
