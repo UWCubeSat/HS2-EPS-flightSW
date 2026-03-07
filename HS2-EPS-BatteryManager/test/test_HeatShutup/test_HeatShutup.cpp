@@ -65,7 +65,6 @@ void test_JEITA_enable (){
     printHsControlState(HsReadControlState());
 }
 
-//works
 void test_TS_enable(){
     printf("\n[TEST] TS Enable\n");
 
