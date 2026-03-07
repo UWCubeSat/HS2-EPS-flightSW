@@ -2,29 +2,6 @@
 #include <Wire.h>
 #include "BQ25756_reg.h"
 
-// // Represents the four selectable TS percentages for T3
-// enum BQ25756::HeatShutup::TS_T3_prcnt{
-//     T3_48p4,
-//     T3_44p8,
-//     T3_41p2,
-//     T3_37p7
-// };
-
-// // Represents the four selectable TS percentages for T2
-// enum BQ25756::HeatShutup::TS_T2_prcnt{
-//     T2_71p1,
-//     T2_68p4,
-//     T2_65p5,
-//     T2_62p4
-// };
-
-// // Represents the four selectable TS percentages for T1
-// enum BQ25756::HeatShutup::TS_T1_prcnt{
-//     T1_77p15,
-//     T1_75p32,
-//     T1_73p25,
-//     T1_71p1
-// };
 
 // Obtain the status of the Thermal Shutdown
 // Returns 
