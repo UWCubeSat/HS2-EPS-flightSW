@@ -2,26 +2,6 @@
 #include <Wire.h>
 #include "BQ25756_reg.h"
 
-
-
-// // Represents temperature levels of TS
-// enum BQ25756::HeatShutup::TS_LVL{
-//     TS_NORMAL,
-//     TS_WARM,
-//     TS_COOL,
-//     TS_COLD,
-//     TS_HOT,
-//     TS_INVALID
-// };
-
-// // Represents the four selectable TS percentages for T5
-// enum BQ25756::HeatShutup::TS_T5_prcnt{
-//     T5_41p2,
-//     T5_37p7,
-//     T5_34p375,
-//     T5_31p25
-// };
-
 // // Represents the four selectable TS percentages for T3
 // enum BQ25756::HeatShutup::TS_T3_prcnt{
 //     T3_48p4,
