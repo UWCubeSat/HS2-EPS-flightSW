@@ -34,7 +34,7 @@ class BQ25756 {
                 // Disable ADC functions
                 void disableADC();
                 void disableIAC_ADC();
-                void disableIBAT_ADC();  // Fixed: was disableIBAT_ADCa
+                void disableIBAT_ADC(); 
                 void disableVAC_ADC();
                 void disableVBAT_ADC();
                 void disableTS_ADC();
