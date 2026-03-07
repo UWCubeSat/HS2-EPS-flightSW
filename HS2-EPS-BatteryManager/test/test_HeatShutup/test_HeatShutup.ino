@@ -22,7 +22,7 @@ void setup(){
     Wire.begin();
     Wire.beginTransmission(0x6B);
     
-    Serial.println("Startig I2C....");
+    printf("Startig I2C....");
     delay(500);
 
     printf("current state\n");
