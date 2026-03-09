@@ -35,7 +35,6 @@ void setup(){
     delay(500);
     test_disableWatchdogTimerControl();
     delay(500);
-    // Check this function working
     test_EnableTSPinFunctionControl();
     delay(500);
     test_enableMPPT();
