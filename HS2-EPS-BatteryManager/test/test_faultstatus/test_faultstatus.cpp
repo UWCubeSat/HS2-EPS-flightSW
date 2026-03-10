@@ -4,7 +4,7 @@
 #include <stdio.h>
 BQ25756 bq;
 
-// ADC control state for BQ25756
+// Fault status state for BQ25756
 struct FaultStatusState {
   bool Input_under_voltage_fault;
   bool Input_over_voltage_fault;
@@ -15,20 +15,26 @@ struct FaultStatusState {
   bool DRV_SUP_pin_fault;
 };
 
-// Get ADC control state by reading registers
-static FaultStatusState readSafetyConfigState()
+// Read the current falut status into the output struct.
+// Return true if reading succeed.
+// Return false if the interface is not initialized.
+static bool readSafetyConfigState(FaultStatusState &s)
 {
-  FaultStatusState s{};
-  if (bq.fs) {
-    s.Input_under_voltage_fault = bq.fs->InputUnderVoltageFault();
-    s.Input_over_voltage_fault= bq.fs->InputOverVoltageFault();
-    s.battery_over_current_fault = bq.fs->BatteryOverCurrentFault();
-    s.battery_over_voltage_fault = bq.fs->BatteryOverVoltageFault();
-    s.thermal_shutdown_fault = bq.fs->ThermalShutdownFault();
-    s.charge_safety_timer_fault = bq.fs->ChargeSafetyTimerFault();
-    s.DRV_SUP_pin_fault = bq.fs->DRV_SUPPinFault();
+  s = {};
+  if (!bq.fs) {
+    printf("EROOR: Fault Status is not initialized.\n");
+    return false;
   }
-  return s;
+  
+  s.Input_under_voltage_fault = bq.fs->InputUnderVoltageFault();
+  s.Input_over_voltage_fault= bq.fs->InputOverVoltageFault();
+  s.battery_over_current_fault = bq.fs->BatteryOverCurrentFault();
+  s.battery_over_voltage_fault = bq.fs->BatteryOverVoltageFault();
+  s.thermal_shutdown_fault = bq.fs->ThermalShutdownFault();
+  s.charge_safety_timer_fault = bq.fs->ChargeSafetyTimerFault();
+  s.DRV_SUP_pin_fault = bq.fs->DRV_SUPPinFault();
+  
+  return true;
 }
 
 // Print Safety Configuration state showing normal / enabled status
@@ -50,5 +56,9 @@ static void printFaultStatusState(const FaultStatusState& s)
 // Print function
 void print_state()
 {
-    printFaultStatusState(readSafetyConfigState());
+    FaultStatusState state{};
+    if (!readSafetyConfigState(state)) {
+      return;
+    }
+    printFaultStatusState(state);
 }

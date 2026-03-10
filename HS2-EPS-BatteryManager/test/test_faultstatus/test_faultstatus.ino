@@ -22,10 +22,9 @@ void setup(){
     printf("printf now works!\n");
 
     // Check the wiring I2C to set up test correctly
-    Wire.begin();
-    Wire.beginTransmission(0x6B);
+    Wire.begin();       // Initiate I2C communication
     
-    Serial.println("Startig I2C....");
+    printf("Start I2C....\n");
 
 }
 
