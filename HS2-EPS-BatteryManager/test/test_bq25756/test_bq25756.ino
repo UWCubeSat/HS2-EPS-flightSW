@@ -25,7 +25,7 @@ void setup(){
     Wire.begin();
     Wire.beginTransmission(0x6B);
     
-    Serial.println("Startig I2C....");
+    Serial.println("Starting I2C....");
     
     delay(500);
 
