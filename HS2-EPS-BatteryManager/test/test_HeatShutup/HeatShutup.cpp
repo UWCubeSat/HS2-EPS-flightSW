@@ -3,49 +3,6 @@
 #include "BQ25756_reg.h"
 
 
-
-// // Represents temperature levels of TS
-// enum BQ25756::HeatShutup::TS_LVL{
-//     TS_NORMAL,
-//     TS_WARM,
-//     TS_COOL,
-//     TS_COLD,
-//     TS_HOT,
-//     TS_INVALID
-// };
-
-// // Represents the four selectable TS percentages for T5
-// enum BQ25756::HeatShutup::TS_T5_prcnt{
-//     T5_41p2,
-//     T5_37p7,
-//     T5_34p375,
-//     T5_31p25
-// };
-
-// // Represents the four selectable TS percentages for T3
-// enum BQ25756::HeatShutup::TS_T3_prcnt{
-//     T3_48p4,
-//     T3_44p8,
-//     T3_41p2,
-//     T3_37p7
-// };
-
-// // Represents the four selectable TS percentages for T2
-// enum BQ25756::HeatShutup::TS_T2_prcnt{
-//     T2_71p1,
-//     T2_68p4,
-//     T2_65p5,
-//     T2_62p4
-// };
-
-// // Represents the four selectable TS percentages for T1
-// enum BQ25756::HeatShutup::TS_T1_prcnt{
-//     T1_77p15,
-//     T1_75p32,
-//     T1_73p25,
-//     T1_71p1
-// };
-
 // Obtain the status of the Thermal Shutdown
 // Returns 
 //         TS_LVL: Status based off of the set JEITA levels
@@ -239,8 +196,8 @@ bool BQ25756::HeatShutup::isTSdisabled(){
 }
 
 void BQ25756::HeatShutup::reset_TS_lvl(){
-    configure_TS_T5_Charging_Threshold(T5_37p7);
+    configure_TS_T5_Charging_Threshold(T5_34p375);
     configure_TS_T3_Charging_Threshold(T3_44p8);
     configure_TS_T2_Charging_Threshold(T2_68p4);
-    configure_TS_T1_Charging_Threshold(T1_75p32);
+    configure_TS_T1_Charging_Threshold(T1_73p25);
 }
