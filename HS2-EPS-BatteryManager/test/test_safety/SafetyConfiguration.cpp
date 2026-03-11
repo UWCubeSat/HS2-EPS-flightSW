@@ -47,6 +47,7 @@ bool BQ25756::SafetyConfig::MPPTenabled()
 }
 
 // Enable TS pin function control
+// This applies to forward charging and reverse discharging modes
 void BQ25756::SafetyConfig::EnableTSPinFunctionControl()
 {
     uint8_t currValue = read8bitRegister(CHARGE_REGION_CONT);
