@@ -25,6 +25,7 @@ void setup(){
     Serial.println("Startig I2C....");
     delay(500);
 
+
     printf("current state\n");
     print_state();
     delay(500);
@@ -48,9 +49,6 @@ void setup(){
     test_TS_enable();
     delay(500);
 
-    printf("Test TS ADC value\n");
-    test_TS_ADC_PRCNT ();
-    delay(500);
 
     printf("Test TS ADC value\n");
     test_readTSVoltagePercent();
@@ -111,6 +109,8 @@ void setup(){
 }
 
 void loop() {
-    
+    printf("Test TS ADC value\n");
+    test_readTSVoltagePercent();
+    delay(500);
 
 }

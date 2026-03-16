@@ -18,5 +18,4 @@ void test_configure_TS_T2_Charging_Threshold (BQ25756::HeatShutup::TS_T2_prcnt l
 void test_configure_TS_T1_Charging_Threshold (BQ25756::HeatShutup::TS_T1_prcnt lvl);
 void test_reset_TS_lvl();
 
-
 #endif

@@ -1,5 +1,11 @@
 // Outer class for BQ25756 should be included here
 #include "BQ25756.h"
+#include "HeatShutup.h" 
+
+BQ25756::BQ25756()
+{
+    hs = new HeatShutup();
+}
 
 void BQ25756::printInitializationStatus(){
         Serial.println("BQ25756 is initialized");
@@ -194,4 +200,26 @@ void BQ25756::ADCControl::disableVFB_ADC()
     uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
     uint8_t newVal = currVal | (1 << 1);
     writeRegister(ADC_CHANNEL_CONT, newVal);
+}
+
+// Set ADC rate One-shot
+void BQ25756::ADCControl::setADCOneShot()
+{
+    uint8_t currVal = read8bitRegister(ADC_CONT);
+    uint8_t newVal = currVal | (1 << 6);
+    writeRegister(ADC_CONT, newVal);
+}
+
+// Enable ADC when ADC is one-shot conversion
+void BQ25756::ADCControl::enableADCReadingForOneshot() 
+{
+    if (!isADCRateOneshot()) {
+        setADCOneShot();
+    }
+
+    enableADC();
+
+    if (read8bitRegister(ADC_CHANNEL_CONT) != 0x00) {
+        enableAllADCControl();
+    }
 }
