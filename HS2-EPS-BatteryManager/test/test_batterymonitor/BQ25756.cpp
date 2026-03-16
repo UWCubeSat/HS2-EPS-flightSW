@@ -12,7 +12,7 @@
 
  BQ25756::BQ25756()
 {
-    batteryMonitor = new BatteryMonitor();
+    bm = new BatteryMonitor();
 }
 
 void BQ25756::resetRegister()
@@ -98,6 +98,14 @@ void BQ25756::ADCControl::setADCContinuous()
     writeRegister(ADC_CONT, newVal);
 }
 
+//Set ADC one-Shot
+void BQ25756::ADCControl::setADCOneShot()
+{
+    uint8_t currVal = read8bitRegister(ADC_CONT);
+    uint8_t newVal = currVal | (1 << 6);
+    writeRegister(ADC_CONT, newVal);
+}
+
 // Enable ADC Control
 // ADC should be enabled before reading ADC value
 void BQ25756::ADCControl::enableADC()
@@ -105,6 +113,20 @@ void BQ25756::ADCControl::enableADC()
     uint8_t currVal = read8bitRegister(ADC_CONT);
     uint8_t newVal = currVal | (1 << 7);
     writeRegister(ADC_CONT, newVal);
+}
+
+// Enable ADC when ADC is one-shot conversion
+void BQ25756::ADCControl::enableADCReadingForOneshot() 
+{
+    if (!isADCRateOneshot()) {
+        setADCOneShot();
+    }
+
+    enableADC();
+
+    if (read8bitRegister(ADC_CHANNEL_CONT) != 0x00) {
+        enableAllADCControl();
+    }
 }
 
 // Enable All ADC Channel Control

@@ -1,36 +1,39 @@
+// Write test code here and call the function in .ino file to run the test
 #include "BatteryMonitor.h"
 #include "test_BatteryMonitor.h"
-#include "BQ25756.h"
+BQ25756 b2;
 
-extern BQ25756 bq;   // bq is defined in the .ino file
+// This function should be called before getting battery status
+void enableADCSequence() {
+    b2.adc.enableAllADCControl();
+    b2.adc.setADCContinuous();
+    b2.adc.enableADC();
+    b2.adc.enableADCReadingForOneshot(); 
+}
+
 
 void reportStatus() {
-    int properties[8];
-    bq.batteryMonitor->getProperties(properties);
+    auto measurements = b2.bm->getMeasurements();
+    printf("VAC: %d mV\n", measurements.vac);
+    printf("VBAT: %d mV\n", measurements.vbat);
+    printf("VFB: %d mV\n", measurements.vfb);
+    printf("VRECHG: %d mV\n", measurements.vrechg);
+    printf("VBAT_LOWV: %d mV\n", measurements.vbat_lowv);
+    printf("ICHG: %d mA\n", measurements.ichg);
+    printf("IAC: %d mA\n", measurements.iac);
+    printf("IBAT: %d mA\n", measurements.ibat);
 
-    const char* names[8] = {
-        "VAC", "VBAT", "VFB", "VRECHG",
-        "VBAT_LOWV", "ICHG", "IAC", "IBAT"
-    };
-
-    for (size_t i = 0; i < 8; i++) {
-        Serial.print(names[i]);
-        Serial.print(": ");
-        Serial.println(properties[i]);
-    }
-
-    auto status = bq.batteryMonitor->getChargingStatus();
-    Serial.print("Charging Status: ");
-    Serial.println(bq.batteryMonitor->toString(status));
+    auto status = b2.bm->getChargingStatus();
+    printf("Charging Status: %s\n", b2.bm->toString(status));
+    
 }
+
 
 void printVBAT_LOWV() {
-    Serial.print("VBAT_LOWV: ");
-    Serial.println(bq.batteryMonitor->readVbat_lowv());
-}
+        uint8_t data = read8bitRegister(PRECHARGE_TERM_CONT);
+        uint8_t bit2_1Value = (data & 0x06) >> 1;
+        printf("VBAT_LOW is ");
+        printf("%d \n", bit2_1Value); //fix this
+    }
 
-void enableCharging() {
-    uint8_t currValue = read8bitRegister(CHARGER_CONT);
-    uint8_t newValue = currValue | (0x01);
-    writeRegister(CHARGER_CONT, newValue);
-}
+    

@@ -1,35 +1,48 @@
 #include <Wire.h>
 #include "BQ25756.h"
-#include "BatteryMonitor.h"
 #include "test_BatteryMonitor.h"
-BQ25756 bq;
 
-void reportStatus();
-void printVBAT_LOWV();
+// This is helper function to use printf in ino code
+int serial_putchar(char c, FILE* f)
+{
+    Serial.write(c);
+    return c;
+}
+
+FILE serial_stdout;
 
 void setup() {
     Serial.begin(9600);
 
+
+    fdev_setup_stream(&serial_stdout, serial_putchar, NULL, _FDEV_SETUP_WRITE);
+    stdout = &serial_stdout;
+
+    printf("printf now works!\n");
+    // Check the wiring I2C to set up test correctly
     Wire.begin();
+    Wire.beginTransmission(0x6B);
+    
     Serial.println("Starting I2C....");
+    
     delay(500);
 
-    bq.adc.enableAllADCControl();
-    bq.adc.setADCContinuous();   // FIXED
-    bq.adc.enableADC();
-
+    enableADCSequence();
+    
+    
     delay(500);
 
+    //Test the Monitor functions
     reportStatus();
     delay(500);
     printVBAT_LOWV();
-    enableCharging();
-    delay(500);
 }
 
-void loop() { 
+void loop() {
+      delay(500);
+
+    //Test the Monitor functions
     reportStatus();
     delay(500);
     printVBAT_LOWV();
-    delay(500);
-    }
+}
