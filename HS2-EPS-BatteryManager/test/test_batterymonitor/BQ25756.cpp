@@ -10,11 +10,14 @@
  *  REG_RST goes back to 0 automatically after writing to 1.
  */
 
+ 
  BQ25756::BQ25756()
 {
     bm = new BatteryMonitor();
 }
 
+// Reset register
+// Register reset to default values
 void BQ25756::resetRegister()
 {
     uint8_t regRstVal = read8bitRegister(POW_PATH_REV_CONT);

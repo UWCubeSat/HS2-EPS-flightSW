@@ -35,21 +35,6 @@ const char* BQ25756::BatteryMonitor::toString(BQ25756::BatteryMonitor::ChargingS
     }
 }
 
-// /*@brief "Stores battery properties in a map for easy acccess"
-
-//     @return "Returns a map of battery properties and their values in millivolts or milliamps" 
-// */  
-// void BQ25756::BatteryMonitor::getProperties(int properties[8]) {
-//     properties[0] = getVac();      // VAC
-//     properties[1] = getVbat();     // VBAT
-//     properties[2] = getVfb();      // VFB
-//     properties[3] = readVrechg();  // VRECHG
-//     properties[4] = readVbat_lowv(); // VBAT_LOWV
-//     properties[5] = readIchg();    // ICHG
-//     properties[6] = getIac();      // IAC
-//     properties[7] = getIbat();     // IBAT
-// }
-
 /*@brief "Stores battery measurements in a struct for easy acccess"
 
     @return "Returns a struct of battery measurements and their values in millivolts or milliamps" 

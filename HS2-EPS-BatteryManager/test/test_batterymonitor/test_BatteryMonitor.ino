@@ -21,7 +21,6 @@ void setup() {
     printf("printf now works!\n");
     // Check the wiring I2C to set up test correctly
     Wire.begin();
-    Wire.beginTransmission(0x6B);
     
     Serial.println("Starting I2C....");
     
@@ -39,7 +38,7 @@ void setup() {
 }
 
 void loop() {
-      delay(500);
+    delay(500);
 
     //Test the Monitor functions
     reportStatus();

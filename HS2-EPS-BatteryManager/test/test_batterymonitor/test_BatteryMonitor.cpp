@@ -1,4 +1,3 @@
-// Write test code here and call the function in .ino file to run the test
 #include "BatteryMonitor.h"
 #include "test_BatteryMonitor.h"
 BQ25756 b2;
@@ -11,7 +10,7 @@ void enableADCSequence() {
     b2.adc.enableADCReadingForOneshot(); 
 }
 
-
+// Report all ADC measurements and charging status
 void reportStatus() {
     auto measurements = b2.bm->getMeasurements();
     printf("VAC: %d mV\n", measurements.vac);
