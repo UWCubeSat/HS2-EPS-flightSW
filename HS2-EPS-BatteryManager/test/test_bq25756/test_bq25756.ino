@@ -61,7 +61,7 @@ void setup(){
 
     
     /*------------- Test enable functions---------------*/
-    printf("Test enble functions\n");
+    printf("Test enable functions\n");
     test_ADC_enable();
     delay(500);
     

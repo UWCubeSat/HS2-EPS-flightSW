@@ -34,13 +34,20 @@ class BQ25756 {
                 // Disable ADC functions
                 void disableADC();
                 void disableIAC_ADC();
-                void disableIBAT_ADC();
+                void disableIBAT_ADC();  // Fixed: was disableIBAT_ADC
                 void disableVAC_ADC();
                 void disableVBAT_ADC();
                 void disableTS_ADC();
                 void disableVFB_ADC();
+                void setADCOneShot();
+                void enableADCReadingForOneshot();
         };
-    ADCControl adc;    
+
+        class HeatShutup;
+        BQ25756(); 
+
+    ADCControl adc;
+    HeatShutup* hs;
 };
 
 #endif
