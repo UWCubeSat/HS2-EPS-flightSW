@@ -4,7 +4,6 @@
 #include "i2c.h"
 #include "BQ25756_reg.h"
 
-
 class BQ25756 {
     public:
         BQ25756();

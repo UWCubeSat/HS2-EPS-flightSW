@@ -1,5 +1,19 @@
 // Outer class for BQ25756 should be included here
 #include "BQ25756.h"
+#include "BatteryMonitor.h"
+#include "HeatShutup.h"
+#include "SafetyConfiguration.h"
+#include "FaultStatus.h"
+
+
+BQ25756::BQ25756()
+{
+    bm = new BatteryMonitor();
+    fs = new FaultStatus();
+    hs = new HeatShutup();
+    sfconfig = new SafetyConfig();
+}
+
 /**
  *  @brief Reset register
  * 
@@ -104,7 +118,6 @@ void BQ25756::ADCControl::enableADC()
 // This function should be called before reading any battery management register
 void BQ25756::ADCControl::enableAllADCControl()
 {
-    uint8_t currVal = read8bitRegister(ADC_CHANNEL_CONT);
     uint8_t newVal = 0x00;
     writeRegister(ADC_CHANNEL_CONT, newVal);
 }
