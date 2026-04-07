@@ -7,6 +7,7 @@
 
 class BQ25756 {
     public:
+        BQ25756();
         void resetRegister();
         class ADCControl {
             public:
@@ -44,7 +45,12 @@ class BQ25756 {
         class HeatShutup;
         class SafetyConfig;
         class FaultStatus;
-    ADCControl adc;    
+
+    ADCControl adc;
+    BatteryMonitor* bm;
+    HeatShutup* hs;       
+    SafetyConfig* sfconfig;
+    FaultStatus* fs; 
 };
 
 #endif
