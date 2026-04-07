@@ -1,9 +1,7 @@
 #ifndef HEAT_SHUTUP_H
 #define HEAT_SHUTUP_H
-
-#include "BQ25756_reg.h"
-#include "i2c.h"
 #include "BQ25756.h"
+
 class BQ25756::HeatShutup{
     public:
         enum TS_LVL {
@@ -56,7 +54,6 @@ class BQ25756::HeatShutup{
         bool isJEITAdisabled();
         bool isTSdisabled();
         void reset_TS_lvl();
-
 };
 
 #endif

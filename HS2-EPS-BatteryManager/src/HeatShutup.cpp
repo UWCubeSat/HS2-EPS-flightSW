@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include "BQ25756_reg.h"
 
+BQ25756 bq1;
 // Obtain the status of the Thermal Shutdown
 // Returns 
 //         TS_LVL: Status based off of the set JEITA levels
@@ -45,7 +46,8 @@ BQ25756::HeatShutup::readTS_STAT(){
 // Return:
 //          float: Voltage on TS Pin as percentage of REGN
 float BQ25756::HeatShutup::readTSVoltagePercent(){
-    uint16_t tsADC = read16BitRegister(TS_ADC);
+    bq1.adc.enableADCReadingForOneshot(); 
+    uint16_t tsADC = read16BitRegister(TS_ADC) & 0x03FF;
     float tsPercentage = (tsADC / 1024.0f) * 100;
     return tsPercentage;
 }
@@ -194,10 +196,10 @@ bool BQ25756::HeatShutup::isTSdisabled(){
     return !((read8bitRegister(CHARGE_REGION_CONT) >> 0) & 0x01);
 }
 
-//Resets the TS levels to their original ratios
+//Resets TS levels to default
 void BQ25756::HeatShutup::reset_TS_lvl(){
-    configure_TS_T5_Charging_Threshold(T5_37p7);
+    configure_TS_T5_Charging_Threshold(T5_34p375);
     configure_TS_T3_Charging_Threshold(T3_44p8);
     configure_TS_T2_Charging_Threshold(T2_68p4);
-    configure_TS_T1_Charging_Threshold(T1_75p32);
+    configure_TS_T1_Charging_Threshold(T1_73p25);
 }
