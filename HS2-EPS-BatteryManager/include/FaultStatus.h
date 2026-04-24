@@ -13,6 +13,10 @@ class BQ25756::FaultStatus{
         bool ChargeSafetyTimerFault();
         bool DRV_SUPPinFault();
 
+    private:
+        // Returns true if the fault at the given FAULT_MASK bit position is unmasked
+        // (i.e., will generate an INT pulse). bit 7 = InputUV, 6 = InputOV, etc.
+        bool isFaultUnmasked(uint8_t bit);
 };
 
 #endif

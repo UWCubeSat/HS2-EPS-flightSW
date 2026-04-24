@@ -52,3 +52,15 @@ void writeRegister(uint8_t reg, uint8_t val) {
     Wire.write(val);                            // Send the value to write
     Wire.endTransmission();
 }
+
+void setBit(uint8_t reg, uint8_t mask) {
+    writeRegister(reg, read8bitRegister(reg) | mask);
+}
+
+void clearBit(uint8_t reg, uint8_t mask) {
+    writeRegister(reg, read8bitRegister(reg) & ~mask);
+}
+
+bool readBit(uint8_t reg, uint8_t mask) {
+    return (read8bitRegister(reg) & mask) != 0;
+}

@@ -3,201 +3,86 @@
 #include "BQ25756_reg.h"
 
 BQ25756 bq1;
-// Obtain the status of the Thermal Shutdown
-// Returns 
-//         TS_LVL: Status based off of the set JEITA levels
-// 
-// This IC Jumps T4 so we will just return 4 as T5
-BQ25756::HeatShutup::TS_LVL
-BQ25756::HeatShutup::readTS_STAT(){
-    TS_LVL tsTemp;
-    uint8_t readVal = read8bitRegister(CHARGER_STATUS_2);
-    readVal &= 0x70;
-    switch(readVal >> 4)
-    {
-        case 0:
-            tsTemp = TS_NORMAL;
-            break;
 
-        case 1:
-            tsTemp = TS_WARM;
-            break;
+// ── Private helper ────────────────────────────────────────────────────────────
 
-        case 2:
-            tsTemp = TS_COOL;
-            break;
-    
-        case 3:
-            tsTemp = TS_COLD;
-            break;
-    
-        case 4:
-            tsTemp = TS_HOT;
-            break;
-
-        default:
-            tsTemp = TS_INVALID;
-            break;
-    }
-    return tsTemp;
+// Clears the field selected by clearMask in CHARGE_THRESH_CONT, then ORs in setValue.
+void BQ25756::HeatShutup::setThresholdField(uint8_t clearMask, uint8_t setValue)
+{
+    uint8_t curr = read8bitRegister(CHARGE_THRESH_CONT);
+    writeRegister(CHARGE_THRESH_CONT, (curr & clearMask) | setValue);
 }
 
-// Measures the voltage on the TS Pin and
-// Return:
-//          float: Voltage on TS Pin as percentage of REGN
-float BQ25756::HeatShutup::readTSVoltagePercent(){
-    bq1.adc.enableADCReadingForOneshot(); 
+
+// ── TS status & voltage ───────────────────────────────────────────────────────
+
+// Obtain the status of the Thermal Shutdown.
+// Returns TS_LVL based on the JEITA temperature zone.
+// This IC jumps T4, so we return TS_HOT for case 4 (effectively T5).
+BQ25756::HeatShutup::TS_LVL BQ25756::HeatShutup::readTS_STAT()
+{
+    uint8_t field = (read8bitRegister(CHARGER_STATUS_2) >> 4) & 0x07;
+    switch (field)
+    {
+        case 0:  return TS_NORMAL;
+        case 1:  return TS_WARM;
+        case 2:  return TS_COOL;
+        case 3:  return TS_COLD;
+        case 4:  return TS_HOT;
+        default: return TS_INVALID;
+    }
+}
+
+// Returns TS pin voltage as a percentage of REGN (0–100%).
+float BQ25756::HeatShutup::readTSVoltagePercent()
+{
+    bq1.adc.enableADCReadingForOneshot();
     uint16_t tsADC = read16BitRegister(TS_ADC) & 0x03FF;
-    float tsPercentage = (tsADC / 1024.0f) * 100;
-    return tsPercentage;
-}
-
-// Enables the current JEITA profile
-void BQ25756::HeatShutup::JEITA_enable (){
-    uint8_t readVal = read8bitRegister(CHARGE_REGION_CONT);
-    uint8_t writeVal = readVal|(0x02);
-    writeRegister(CHARGE_REGION_CONT, writeVal);
-} 
-
-// Disables the current JEITA profile
-void BQ25756::HeatShutup::JEITA_disable (){
-    uint8_t readVal = read8bitRegister(CHARGE_REGION_CONT);
-    uint8_t writeVal = readVal & ~(0x02);
-    writeRegister(CHARGE_REGION_CONT, writeVal);
-}
-
-// Enables TS pin function control
-// This could applies to forward charging and reverse discharging modes
-void BQ25756::HeatShutup::TS_enable (){
-    uint8_t readVal = read8bitRegister(CHARGE_REGION_CONT);
-    uint8_t writeVal = readVal | (0x01);
-    writeRegister(CHARGE_REGION_CONT, writeVal);
-}
-
-//Disables the Thermistor
-void BQ25756::HeatShutup::TS_disable (){
-    uint8_t readVal = read8bitRegister(CHARGE_REGION_CONT);
-    uint8_t writeVal = readVal & ~(0x01);
-    writeRegister(CHARGE_REGION_CONT, writeVal);
-}
-
-// Adjusts the charging percentages of the T5 zone from four options
-// to adjust the temperature zone
-void BQ25756::HeatShutup::configure_TS_T5_Charging_Threshold (TS_T5_prcnt userInput){
-    uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
-    uint8_t writeVal = readVal;
-    switch(userInput)
-    {
-        case T5_41p2:
-            writeVal &= 0x3F;
-            break;
-
-        case T5_37p7:
-            writeVal = (writeVal & 0x3F) | 0x40;
-            break;
-
-        case T5_34p375:
-            writeVal = (writeVal & 0x3F) | 0x80;
-            break;
-
-        case T5_31p25:
-            writeVal = (writeVal & 0x3F)  | 0xC0;
-            break;
-    }
-    writeRegister (CHARGE_THRESH_CONT, writeVal);
-}
-
-// Adjusts the charging percentages of the T3 zone from four options
-// to adjust the temperature zone
-void BQ25756::HeatShutup::configure_TS_T3_Charging_Threshold (TS_T3_prcnt userInput){
-    uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
-    uint8_t writeVal = readVal;
-    switch(userInput)
-    {
-        case T3_48p4:
-            writeVal &= 0xCF;
-            break;
-
-        case T3_44p8:
-            writeVal = (writeVal & 0xCF) | 0x10;
-            break;
-
-        case T3_41p2:
-            writeVal = (writeVal & 0xCF) | 0x20;
-            break;
-
-        case T3_37p7:
-            writeVal = (writeVal & 0xCF)  | 0x30;
-            break;
-    }
-    writeRegister (CHARGE_THRESH_CONT, writeVal);
-}
-
-// Adjusts the charging percentages of the T2 zone from four options
-// to adjust the temperature zone
-void BQ25756::HeatShutup::configure_TS_T2_Charging_Threshold (TS_T2_prcnt userInput){
-    uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
-    uint8_t writeVal = readVal;
-    switch(userInput)
-    {
-        case T2_71p1:
-            writeVal &= 0xF3;
-            break;
-
-        case T2_68p4:
-            writeVal = (writeVal & 0xF3) | 0x04;
-            break;
-
-        case T2_65p5:
-            writeVal = (writeVal & 0xF3) | 0x08;
-            break;
-
-        case T2_62p4:
-            writeVal = (writeVal & 0xF3)  | 0x0C;
-            break;
-    }
-    writeRegister (CHARGE_THRESH_CONT, writeVal);
-}
-
-// Adjusts the charging percentages of the T1 zone from four options
-// to adjust the temperature zone
-void BQ25756::HeatShutup::configure_TS_T1_Charging_Threshold (TS_T1_prcnt userInput){
-    uint8_t readVal = read8bitRegister(CHARGE_THRESH_CONT);
-    uint8_t writeVal = readVal;
-    switch(userInput)
-    {
-        case T1_77p15:
-            writeVal &= 0xFC;
-            break;
-
-    case T1_75p32:
-        writeVal = (writeVal & 0xFC) | 0x01;
-        break;
-
-    case T1_73p25:
-        writeVal = (writeVal & 0xFC) | 0x02;
-        break;
-
-    case T1_71p1:
-        writeVal = (writeVal & 0xFC)  | 0x03;
-        break;
-    }
-    writeRegister (CHARGE_THRESH_CONT, writeVal);
+    return (tsADC / 1024.0f) * 100;
 }
 
 
-//Checks if JEITA levels are disabled
-bool BQ25756::HeatShutup::isJEITAdisabled(){
-    return !((read8bitRegister(CHARGE_REGION_CONT) >> 1) & 0x01);
+// ── JEITA / TS enable ─────────────────────────────────────────────────────────
+
+void BQ25756::HeatShutup::JEITA_enable()  { setBit(CHARGE_REGION_CONT,   0x02); }
+void BQ25756::HeatShutup::JEITA_disable() { clearBit(CHARGE_REGION_CONT, 0x02); }
+void BQ25756::HeatShutup::TS_enable()     { setBit(CHARGE_REGION_CONT,   0x01); }
+void BQ25756::HeatShutup::TS_disable()    { clearBit(CHARGE_REGION_CONT, 0x01); }
+
+bool BQ25756::HeatShutup::isJEITAdisabled() { return !readBit(CHARGE_REGION_CONT, 0x02); }
+bool BQ25756::HeatShutup::isTSdisabled()    { return !readBit(CHARGE_REGION_CONT, 0x01); }
+
+
+// ── Charging threshold configuration ─────────────────────────────────────────
+//
+// CHARGE_THRESH_CONT bit layout:
+//   [7:6] T5  [5:4] T3  [3:2] T2  [1:0] T1
+//
+// The enum values (0–3) map directly to the 2-bit field value for each zone,
+// so we just shift the enum into position.
+
+void BQ25756::HeatShutup::configure_TS_T5_Charging_Threshold(TS_T5_prcnt userInput)
+{
+    setThresholdField(0x3F, userInput << 6);
 }
 
-//Checks if TS is disabled
-bool BQ25756::HeatShutup::isTSdisabled(){
-    return !((read8bitRegister(CHARGE_REGION_CONT) >> 0) & 0x01);
+void BQ25756::HeatShutup::configure_TS_T3_Charging_Threshold(TS_T3_prcnt userInput)
+{
+    setThresholdField(0xCF, userInput << 4);
 }
 
-//Resets TS levels to default
-void BQ25756::HeatShutup::reset_TS_lvl(){
+void BQ25756::HeatShutup::configure_TS_T2_Charging_Threshold(TS_T2_prcnt userInput)
+{
+    setThresholdField(0xF3, userInput << 2);
+}
+
+void BQ25756::HeatShutup::configure_TS_T1_Charging_Threshold(TS_T1_prcnt userInput)
+{
+    setThresholdField(0xFC, userInput);
+}
+
+void BQ25756::HeatShutup::reset_TS_lvl()
+{
     configure_TS_T5_Charging_Threshold(T5_34p375);
     configure_TS_T3_Charging_Threshold(T3_44p8);
     configure_TS_T2_Charging_Threshold(T2_68p4);

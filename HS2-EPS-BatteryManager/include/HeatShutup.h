@@ -54,6 +54,10 @@ class BQ25756::HeatShutup{
         bool isJEITAdisabled();
         bool isTSdisabled();
         void reset_TS_lvl();
+
+    private:
+        // Clears the field selected by clearMask, then ORs in setValue, on CHARGE_THRESH_CONT
+        void setThresholdField(uint8_t clearMask, uint8_t setValue);
 };
 
 #endif
