@@ -1,66 +1,58 @@
 #ifndef BQ25756_BATTERY_MONITOR_HPP
 #define BQ25756_BATTERY_MONITOR_HPP
 
-#include "BQ25756/BatteryMonitorComponentAc.hpp"  // FPrime auto-generated base
-#include "i2c.hpp"                                 // read8bitRegister, read16bitRegister, writeRegister
-#include "BQ25756_reg.h"                           // Register addresses, I2C_BUS_ADDR
+#include "i2c.hpp"
+#include "BQ25756_reg.h"
+#include <Fw/Types/BasicTypes.hpp>
 
 namespace BQ25756 {
 
 /**
- * @brief BQ25756 battery charger manager component.
+ * @brief Battery voltage, current, and charging status monitor.
  *
- * This component is the MANAGER layer in the Application-Manager-Driver pattern.
- * It uses i2c.hpp helper functions for all register access — no Wire.h anywhere.
- *
- * I2C flow:
- *   BatteryMonitor (calls i2c helpers)
- *     -> i2c.cpp (builds Fw::Buffer, calls ctx.writeReadFn / ctx.writeFn)
- *       -> busWriteRead_out / busWrite_out  (FPrime ports on this component)
- *         -> Drv::LinuxI2cDriver            (wired in topology)
- *           -> Linux I2C_RDWR ioctl         (actual hardware)
- *
- * Topology wiring (.fpp):
- *   batteryMonitor.busWriteRead -> linuxI2cDriver.writeRead
- *   batteryMonitor.busWrite     -> linuxI2cDriver.write
- *
- * Topology init (Topology.cpp):
- *   linuxI2cDriver.open("/dev/i2c-1");
+ * All methods require an I2cContext built by the calling FPrime component.
+ * No Wire.h, no global BQ25756 object, no bq.adc.enableADCReadingForOneshot().
  */
-class BatteryMonitor : public BatteryMonitorComponentBase {
+class BatteryMonitor {
   public:
-    explicit BatteryMonitor(const char* compName);
-    ~BatteryMonitor() = default;
+    /// All battery measurements in one struct (mV or mA)
+    struct BatteryMeasurements {
+        I32 vac;
+        I32 vbat;
+        I32 vfb;
+        I32 vrechg;
+        I32 vbat_lowv;
+        I32 ichg;
+        I32 iac;
+        I32 ibat;
+    };
+
+    /// Charging status from CHARGER_STATUS_1 bits [2:0]
+    enum class ChargingStatus : U8 {
+        NOT_CHARGING            = 0x00,
+        TRICKLE_CHARGE          = 0x01,
+        PRE_CHARGE              = 0x02,
+        FAST_CHARGE             = 0x03,
+        TAPER_CHARGE            = 0x04,
+        RESERVED                = 0x05,
+        TOP_OFF_TIMER_ACTIVE    = 0x06,
+        CHARGE_TERMINATION_DONE = 0x07
+    };
+
+    const char*          toString          (ChargingStatus status);
+    BatteryMeasurements  getMeasurements   (const I2cContext& ctx);
+    ChargingStatus       getChargingStatus (const I2cContext& ctx);
 
   private:
-    // -----------------------------------------------------------------------
-    // Port handler overrides (auto-generated pure-virtuals)
-    // -----------------------------------------------------------------------
-
-    BQ25756_BatteryMeasurements getMeasurements_handler (NATIVE_INT_TYPE portNum) override;
-    BQ25756_ChargingStatus      getChargingStatus_handler(NATIVE_INT_TYPE portNum) override;
-    I32 getVac_handler (NATIVE_INT_TYPE portNum) override;
-    I32 getVbat_handler(NATIVE_INT_TYPE portNum) override;
-    I32 getVfb_handler (NATIVE_INT_TYPE portNum) override;
-    I32 getIac_handler (NATIVE_INT_TYPE portNum) override;
-    I32 getIbat_handler(NATIVE_INT_TYPE portNum) override;
-
-    // -----------------------------------------------------------------------
-    // BQ25756 register logic helpers (no I2C knowledge — only call i2c.hpp)
-    // -----------------------------------------------------------------------
-
-    I32 getVfbReg();
-    I32 readIchg();
-    I32 readVrechg();
-    I32 readVbat_lowv();
-
-    // -----------------------------------------------------------------------
-    // I2C context builder
-    // Returns an I2cContext whose function pointers call this component's
-    // busWriteRead_out / busWrite_out ports. Passed to every i2c.hpp call.
-    // -----------------------------------------------------------------------
-
-    I2cContext makeCtx();
+    I32 getVac        (const I2cContext& ctx);
+    I32 getVbat       (const I2cContext& ctx);
+    I32 getVfb        (const I2cContext& ctx);
+    I32 getVfbReg     (const I2cContext& ctx);
+    I32 getIac        (const I2cContext& ctx);
+    I32 getIbat       (const I2cContext& ctx);
+    I32 readVrechg    (const I2cContext& ctx);
+    I32 readVbat_lowv (const I2cContext& ctx);
+    I32 readIchg      (const I2cContext& ctx);
 };
 
 }  // namespace BQ25756
