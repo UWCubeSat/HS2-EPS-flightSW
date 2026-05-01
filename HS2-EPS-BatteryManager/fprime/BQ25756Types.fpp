@@ -75,3 +75,19 @@ module BQ25756 {
     }
 
 }
+
+    @ ADC channel selector — used by ADC_ENABLE_CHANNEL and ADC_DISABLE_CHANNEL commands
+    enum AdcChannel : U8 {
+        IAC  = 0,   @< Input current ADC (ADC_CHANNEL_CONT bit 7)
+        IBAT = 1,   @< Battery current ADC (ADC_CHANNEL_CONT bit 6)
+        VAC  = 2,   @< Input voltage ADC (ADC_CHANNEL_CONT bit 5)
+        VBAT = 3,   @< Battery voltage ADC (ADC_CHANNEL_CONT bit 4)
+        TS   = 4,   @< Temperature sensor ADC (ADC_CHANNEL_CONT bit 2)
+        VFB  = 5    @< Feedback voltage ADC (ADC_CHANNEL_CONT bit 1)
+    }
+
+    @ ADC conversion rate — used by ADC_SET_RATE command
+    enum AdcRate : U8 {
+        CONTINUOUS = 0,   @< ADC keeps converting (use with BatteryMonitor schedIn)
+        ONESHOT    = 1    @< ADC converts once then stops (use for commanded reads)
+    }

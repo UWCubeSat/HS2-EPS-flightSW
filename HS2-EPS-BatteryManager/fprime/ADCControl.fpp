@@ -1,120 +1,95 @@
 module BQ25756 {
 
-    @ ADC enable/disable control for all BQ25756 ADC channels.
-    @ Wraps ADC_CONT and ADC_CHANNEL_CONT register operations.
+    @ ADC enable/disable and rate control for BQ25756.
+    @
+    @ BatteryMonitor uses continuous mode via schedIn.
+    @ All other components trigger one-shot reads via commands.
     passive component ADCControl {
 
         # -------------------------------------------------------------------
-        # I2C bus ports — wired to Drv.LinuxI2cDriver in topology
+        # I2C bus ports
         # -------------------------------------------------------------------
 
-        @ Write-then-read port — used for all register reads
+        @ Write-then-read port for register reads
         sync output port busWriteRead: Drv.I2cWriteRead
 
-        @ Write-only port — used for all register writes
+        @ Write-only port for register writes
         sync output port busWrite: Drv.I2cWrite
-
-        # -------------------------------------------------------------------
-        # Command input ports — called by application or ground system
-        # -------------------------------------------------------------------
-
-        @ Set ADC conversion rate to continuous
-        sync input port setADCContinuous:    BQ25756.CmdNoArgPort
-
-        @ Enable ADC (ADC_CONT bit 7)
-        sync input port enableADC:           BQ25756.CmdNoArgPort
-
-        @ Enable all ADC channels at once
-        sync input port enableAllADCControl: BQ25756.CmdNoArgPort
-
-        @ Disable ADC
-        sync input port disableADC:          BQ25756.CmdNoArgPort
-
-        @ Enable individual ADC channels
-        sync input port enableIAC_ADC:       BQ25756.CmdNoArgPort
-        sync input port enableIBAT_ADC:      BQ25756.CmdNoArgPort
-        sync input port enableVAC_ADC:       BQ25756.CmdNoArgPort
-        sync input port enableVBAT_ADC:      BQ25756.CmdNoArgPort
-        sync input port enableTS_ADC:        BQ25756.CmdNoArgPort
-        sync input port enableVFB_ADC:       BQ25756.CmdNoArgPort
-
-        @ Disable individual ADC channels
-        sync input port disableIAC_ADC:      BQ25756.CmdNoArgPort
-        sync input port disableIBAT_ADC:     BQ25756.CmdNoArgPort
-        sync input port disableVAC_ADC:      BQ25756.CmdNoArgPort
-        sync input port disableVBAT_ADC:     BQ25756.CmdNoArgPort
-        sync input port disableTS_ADC:       BQ25756.CmdNoArgPort
-        sync input port disableVFB_ADC:      BQ25756.CmdNoArgPort
-
-        @ Query ADC status — returns bool
-        sync input port isADCEnabled:        BQ25756.QueryBoolPort
-        sync input port isADCRateOneshot:    BQ25756.QueryBoolPort
-        sync input port isIBAT_ADCDisabled:  BQ25756.QueryBoolPort
-        sync input port isIAC_ADCDisabled:   BQ25756.QueryBoolPort
-        sync input port isVAC_ADCDisabled:   BQ25756.QueryBoolPort
-        sync input port isVBAT_ADCDisabled:  BQ25756.QueryBoolPort
-        sync input port isTS_ADCDisabled:    BQ25756.QueryBoolPort
-        sync input port isVFB_ADCDisabled:   BQ25756.QueryBoolPort
 
         # -------------------------------------------------------------------
         # Framework ports
         # -------------------------------------------------------------------
 
+        command reg port cmdRegOut
+        command recv port cmdIn
+        command resp port cmdResponseOut
         telemetry port tlmOut
         event port logOut
         text event port logTextOut
         time get port timeGetOut
 
         # -------------------------------------------------------------------
-        # Telemetry
+        # Commands
         # -------------------------------------------------------------------
 
-        @ ADC enabled flag
-        telemetry AdcEnabled:      bool id 0
+        @ Enable ADC (sets ADC_CONT bit 7)
+        guarded command ADC_ENABLE
 
-        @ ADC conversion rate (true = one-shot, false = continuous)
-        telemetry AdcRateOneshot:  bool id 1
+        @ Disable ADC (clears ADC_CONT bit 7)
+        guarded command ADC_DISABLE
 
-        @ IAC ADC channel disabled flag
-        telemetry IacAdcDisabled:  bool id 2
+        @ Set ADC conversion rate.
+        @ Use CONTINUOUS for BatteryMonitor schedIn.
+        @ Use ONESHOT for commanded single reads.
+        guarded command ADC_SET_RATE(
+            rate: BQ25756.AdcRate  @< CONTINUOUS or ONESHOT
+        )
 
-        @ IBAT ADC channel disabled flag
-        telemetry IbatAdcDisabled: bool id 3
+        @ Enable all ADC channels at once (writes 0x00 to ADC_CHANNEL_CONT)
+        guarded command ADC_ENABLE_ALL_CHANNELS
 
-        @ VAC ADC channel disabled flag
-        telemetry VacAdcDisabled:  bool id 4
+        @ Enable a specific ADC channel
+        guarded command ADC_ENABLE_CHANNEL(
+            channel: BQ25756.AdcChannel
+        )
 
-        @ VBAT ADC channel disabled flag
-        telemetry VbatAdcDisabled: bool id 5
-
-        @ TS ADC channel disabled flag
-        telemetry TsAdcDisabled:   bool id 6
-
-        @ VFB ADC channel disabled flag
-        telemetry VfbAdcDisabled:  bool id 7
+        @ Disable a specific ADC channel
+        guarded command ADC_DISABLE_CHANNEL(
+            channel: BQ25756.AdcChannel
+        )
 
         # -------------------------------------------------------------------
         # Events
         # -------------------------------------------------------------------
 
-        @ ADC enabled successfully
-        event AdcEnabled severity activity low \
+        event AdcEnabled \
+            severity activity low \
             format "ADC enabled"
 
-        @ ADC disabled
-        event AdcDisabled severity activity low \
+        event AdcDisabled \
+            severity activity low \
             format "ADC disabled"
 
-        @ All ADC channels enabled
-        event AllChannelsEnabled severity activity low \
+        event AdcRateSet(rate: BQ25756.AdcRate) \
+            severity activity low \
+            format "ADC rate set to {}"
+
+        event AllChannelsEnabled \
+            severity activity low \
             format "All ADC channels enabled"
 
-        @ I2C read failed
+        event ChannelEnabled(channel: BQ25756.AdcChannel) \
+            severity activity low \
+            format "ADC channel {} enabled"
+
+        event ChannelDisabled(channel: BQ25756.AdcChannel) \
+            severity activity low \
+            format "ADC channel {} disabled"
+
         event I2cReadFailed(reg: U8, status: I32) \
             severity warning high \
             format "I2C read failed on reg 0x{x}: status {}"
 
-        @ I2C write failed
         event I2cWriteFailed(reg: U8, status: I32) \
             severity warning high \
             format "I2C write failed on reg 0x{x}: status {}"

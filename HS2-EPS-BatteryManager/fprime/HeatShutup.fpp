@@ -1,101 +1,124 @@
 module BQ25756 {
 
-    @ Thermal shutdown configuration and JEITA temperature zone control.
+    @ Thermal shutdown and JEITA zone control for BQ25756.
     passive component HeatShutup {
 
         # -------------------------------------------------------------------
         # I2C bus ports
         # -------------------------------------------------------------------
 
-        @ Write-then-read port — used for all register reads
+        @ Write-then-read port for register reads
         sync output port busWriteRead: Drv.I2cWriteRead
 
-        @ Write-only port — used for register writes
+        @ Write-only port for register writes
         sync output port busWrite: Drv.I2cWrite
 
         # -------------------------------------------------------------------
-        # Input ports
+        # Scheduler — periodic thermal telemetry
         # -------------------------------------------------------------------
 
-        @ Read current thermal zone status
-        sync input port getTS_Status:    BQ25756.GetTsLvlPort
-
-        @ Read TS pin voltage as percentage of REGN
-        sync input port getTSVoltage:    BQ25756.GetF32Port
-
-        @ Enable/disable JEITA profile
-        sync input port enableJEITA:     BQ25756.CmdNoArgPort
-        sync input port disableJEITA:    BQ25756.CmdNoArgPort
-
-        @ Enable/disable TS pin function
-        sync input port enableTS:        BQ25756.CmdNoArgPort
-        sync input port disableTS:       BQ25756.CmdNoArgPort
-
-        @ Configure temperature zone thresholds
-        sync input port setT5Threshold:  BQ25756.SetT5Port
-        sync input port setT3Threshold:  BQ25756.SetT3Port
-        sync input port setT2Threshold:  BQ25756.SetT2Port
-        sync input port setT1Threshold:  BQ25756.SetT1Port
-
-        @ Reset all thresholds to factory defaults
-        sync input port resetTS:         BQ25756.CmdNoArgPort
-
-        @ Query JEITA and TS disabled status
-        sync input port isJEITAdisabled: BQ25756.QueryBoolPort
-        sync input port isTSdisabled:    BQ25756.QueryBoolPort
+        @ Periodic update — reads TS status and voltage, publishes telemetry
+        sync input port schedIn: Svc.Sched
 
         # -------------------------------------------------------------------
         # Framework ports
         # -------------------------------------------------------------------
 
+        command reg port cmdRegOut
+        command recv port cmdIn
+        command resp port cmdResponseOut
         telemetry port tlmOut
         event port logOut
         text event port logTextOut
         time get port timeGetOut
 
         # -------------------------------------------------------------------
-        # Telemetry
+        # Commands
         # -------------------------------------------------------------------
 
-        @ Current thermal zone
-        telemetry ThermalZone:     BQ25756.TS_LVL id 0
+        @ Enable JEITA temperature zone charging profile (CHARGE_REGION_CONT bit 1)
+        guarded command HS_JEITA_ENABLE
+
+        @ Disable JEITA temperature zone charging profile
+        guarded command HS_JEITA_DISABLE
+
+        @ Enable TS pin thermistor function (CHARGE_REGION_CONT bit 0)
+        guarded command HS_TS_ENABLE
+
+        @ Disable TS pin thermistor function
+        guarded command HS_TS_DISABLE
+
+        @ Configure T5 zone threshold percentage (CHARGE_THRESH_CONT bits [7:6])
+        guarded command HS_SET_T5_THRESHOLD(
+            threshold: BQ25756.TS_T5_prcnt
+        )
+
+        @ Configure T3 zone threshold percentage (CHARGE_THRESH_CONT bits [5:4])
+        guarded command HS_SET_T3_THRESHOLD(
+            threshold: BQ25756.TS_T3_prcnt
+        )
+
+        @ Configure T2 zone threshold percentage (CHARGE_THRESH_CONT bits [3:2])
+        guarded command HS_SET_T2_THRESHOLD(
+            threshold: BQ25756.TS_T2_prcnt
+        )
+
+        @ Configure T1 zone threshold percentage (CHARGE_THRESH_CONT bits [1:0])
+        guarded command HS_SET_T1_THRESHOLD(
+            threshold: BQ25756.TS_T1_prcnt
+        )
+
+        @ Reset all TS thresholds to factory defaults
+        guarded command HS_RESET_THRESHOLDS
+
+        # -------------------------------------------------------------------
+        # Telemetry — updated every schedIn tick
+        # -------------------------------------------------------------------
+
+        @ Current thermal zone from CHARGER_STATUS_2 bits [6:4]
+        telemetry ThermalZone: BQ25756.TS_LVL id 0
 
         @ TS pin voltage as percentage of REGN
-        telemetry TSVoltage:       F32 id 1 format "{} %%"
+        telemetry TSVoltagePercent: F32 id 1 format "{} %%"
 
         @ JEITA profile enabled flag
-        telemetry JEITAEnabled:    bool id 2
+        telemetry JEITAEnabled: bool id 2
 
-        @ TS function enabled flag
-        telemetry TSEnabled:       bool id 3
+        @ TS pin function enabled flag
+        telemetry TSEnabled: bool id 3
 
         # -------------------------------------------------------------------
         # Events
         # -------------------------------------------------------------------
 
-        @ Thermal zone changed
+        event JEITAEnabled \
+            severity activity low \
+            format "JEITA profile enabled"
+
+        event JEITADisabled \
+            severity activity low \
+            format "JEITA profile disabled"
+
+        event TSEnabled \
+            severity activity low \
+            format "TS pin function enabled"
+
+        event TSDisabled \
+            severity activity low \
+            format "TS pin function disabled"
+
         event ThermalZoneChanged(zone: BQ25756.TS_LVL) \
             severity activity low \
             format "Thermal zone changed to {}"
 
-        @ JEITA enabled
-        event JEITAEnabled severity activity low \
-            format "JEITA profile enabled"
-
-        @ JEITA disabled
-        event JEITADisabled severity activity low \
-            format "JEITA profile disabled"
-
-        @ TS thresholds reset to defaults
-        event TSThresholdsReset severity activity low \
+        event ThresholdsReset \
+            severity activity low \
             format "TS thresholds reset to factory defaults"
 
-        @ I2C read failed
         event I2cReadFailed(reg: U8, status: I32) \
             severity warning high \
             format "I2C read failed on reg 0x{x}: status {}"
 
-        @ I2C write failed
         event I2cWriteFailed(reg: U8, status: I32) \
             severity warning high \
             format "I2C write failed on reg 0x{x}: status {}"
