@@ -1,7 +1,7 @@
 #ifndef BQ25756_HEAT_SHUTUP_HPP
 #define BQ25756_HEAT_SHUTUP_HPP
 
-#include "BQ25756/HeatShutupComponentAc.hpp"  // FPrime auto-generated base
+#include "BQ25756/HeatShutupComponentAc.hpp"
 #include "i2c.hpp"
 #include "BQ25756_reg.h"
 
@@ -11,20 +11,17 @@ namespace BQ25756 {
  * @brief Thermal shutdown configuration and JEITA zone control.
  *
  * Existing methods are preserved unchanged.
- * FPrime schedIn (periodic telemetry) and command handlers are added on top.
- *
- * schedIn_handler reads thermal zone + TS voltage + JEITA/TS flags every tick.
+ * FPrime schedIn (periodic telemetry) and 4 commands are implemented:
  *
  * Command handler → existing method mapping:
  *   HS_JEITA_ENABLE_cmdHandler  → JEITA_enable()
  *   HS_JEITA_DISABLE_cmdHandler → JEITA_disable()
  *   HS_TS_ENABLE_cmdHandler     → TS_enable()
  *   HS_TS_DISABLE_cmdHandler    → TS_disable()
- *   HS_SET_T5_THRESHOLD_cmdHandler → configure_TS_T5_Charging_Threshold()
- *   HS_SET_T3_THRESHOLD_cmdHandler → configure_TS_T3_Charging_Threshold()
- *   HS_SET_T2_THRESHOLD_cmdHandler → configure_TS_T2_Charging_Threshold()
- *   HS_SET_T1_THRESHOLD_cmdHandler → configure_TS_T1_Charging_Threshold()
- *   HS_RESET_THRESHOLDS_cmdHandler → reset_TS_lvl()
+ *
+ * Note: threshold configuration (configure_TS_Tx_Charging_Threshold,
+ * reset_TS_lvl) is available as direct C++ calls but not exposed as
+ * FPrime commands — configure thresholds at startup in Topology.cpp.
  */
 class HeatShutup : public HeatShutupComponentBase {
   public:
@@ -56,7 +53,7 @@ class HeatShutup : public HeatShutupComponentBase {
 
   private:
     // -----------------------------------------------------------------------
-    // FPrime handler overrides (NEW)
+    // FPrime handler overrides
     // -----------------------------------------------------------------------
     void schedIn_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) override;
 
@@ -65,17 +62,6 @@ class HeatShutup : public HeatShutupComponentBase {
     void HS_TS_ENABLE_cmdHandler     (FwOpcodeType opCode, U32 cmdSeq) override;
     void HS_TS_DISABLE_cmdHandler    (FwOpcodeType opCode, U32 cmdSeq) override;
 
-    void HS_SET_T5_THRESHOLD_cmdHandler(
-        FwOpcodeType opCode, U32 cmdSeq, BQ25756_TS_T5_prcnt threshold) override;
-    void HS_SET_T3_THRESHOLD_cmdHandler(
-        FwOpcodeType opCode, U32 cmdSeq, BQ25756_TS_T3_prcnt threshold) override;
-    void HS_SET_T2_THRESHOLD_cmdHandler(
-        FwOpcodeType opCode, U32 cmdSeq, BQ25756_TS_T2_prcnt threshold) override;
-    void HS_SET_T1_THRESHOLD_cmdHandler(
-        FwOpcodeType opCode, U32 cmdSeq, BQ25756_TS_T1_prcnt threshold) override;
-    void HS_RESET_THRESHOLDS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) override;
-
-    // Tracks last thermal zone to fire event only on change
     TS_LVL     m_lastZone = TS_INVALID;
     I2cContext makeCtx();
 };

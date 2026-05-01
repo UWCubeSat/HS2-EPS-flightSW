@@ -79,6 +79,7 @@ void HeatShutup::TS_disable(const I2cContext& ctx) {
 
 /**
  * @brief Configure T5 zone charging threshold (CHARGE_THRESH_CONT bits [7:6]).
+ * @note Not exposed as a command — call directly from Topology.cpp at startup.
  * @param[in] ctx        I2C context.
  * @param[in] userInput  Desired T5 threshold percentage.
  */
@@ -95,6 +96,7 @@ void HeatShutup::configure_TS_T5_Charging_Threshold(const I2cContext& ctx, TS_T5
 
 /**
  * @brief Configure T3 zone charging threshold (CHARGE_THRESH_CONT bits [5:4]).
+ * @note Not exposed as a command — call directly from Topology.cpp at startup.
  * @param[in] ctx        I2C context.
  * @param[in] userInput  Desired T3 threshold percentage.
  */
@@ -111,6 +113,7 @@ void HeatShutup::configure_TS_T3_Charging_Threshold(const I2cContext& ctx, TS_T3
 
 /**
  * @brief Configure T2 zone charging threshold (CHARGE_THRESH_CONT bits [3:2]).
+ * @note Not exposed as a command — call directly from Topology.cpp at startup.
  * @param[in] ctx        I2C context.
  * @param[in] userInput  Desired T2 threshold percentage.
  */
@@ -127,6 +130,7 @@ void HeatShutup::configure_TS_T2_Charging_Threshold(const I2cContext& ctx, TS_T2
 
 /**
  * @brief Configure T1 zone charging threshold (CHARGE_THRESH_CONT bits [1:0]).
+ * @note Not exposed as a command — call directly from Topology.cpp at startup.
  * @param[in] ctx        I2C context.
  * @param[in] userInput  Desired T1 threshold percentage.
  */
@@ -161,6 +165,7 @@ bool HeatShutup::isTSdisabled(const I2cContext& ctx) {
 
 /**
  * @brief Reset all TS threshold levels to factory defaults.
+ * @note Not exposed as a command — call directly from Topology.cpp at startup.
  * Default values: T5=34.375%, T3=44.8%, T2=68.4%, T1=73.25%.
  * @param[in] ctx  I2C context.
  */
@@ -172,39 +177,34 @@ void HeatShutup::reset_TS_lvl(const I2cContext& ctx) {
 }
 
 // ===========================================================================
-// FPrime schedIn handler — NEW, calls existing methods above
+// schedIn handler — periodic thermal telemetry
 // ===========================================================================
 
 /**
  * @brief Periodic thermal telemetry update — called every rate group tick.
  *
  * Calls existing methods:
- *   readTS_STAT()         → ThermalZone telemetry + ThermalZoneChanged event
+ *   readTS_STAT()          → ThermalZone telemetry + ThermalZoneChanged event on change
  *   readTSVoltagePercent() → TSVoltagePercent telemetry
- *   isJEITAdisabled()     → JEITAEnabled telemetry
- *   isTSdisabled()        → TSEnabled telemetry
+ *   isJEITAdisabled()      → JEITAEnabled telemetry
+ *   isTSdisabled()         → TSEnabled telemetry
  */
 void HeatShutup::schedIn_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
     I2cContext ctx = makeCtx();
 
-    // Call existing method — reads CHARGER_STATUS_2 bits [6:4]
     TS_LVL zone = readTS_STAT(ctx);
     if (zone != m_lastZone) {
         log_ACTIVITY_LO_ThermalZoneChanged(static_cast<BQ25756_TS_LVL>(zone));
         m_lastZone = zone;
     }
     tlmWrite_ThermalZone(static_cast<BQ25756_TS_LVL>(zone));
-
-    // Call existing method — reads TS_ADC bits [9:0]
     tlmWrite_TSVoltagePercent(readTSVoltagePercent(ctx));
-
-    // Call existing methods — reads CHARGE_REGION_CONT bits [1:0]
     tlmWrite_JEITAEnabled(!isJEITAdisabled(ctx));
-    tlmWrite_TSEnabled    (!isTSdisabled(ctx));
+    tlmWrite_TSEnabled(!isTSdisabled(ctx));
 }
 
 // ===========================================================================
-// FPrime command handlers — NEW, call existing methods above
+// Command handlers — 4 only
 // ===========================================================================
 
 /**
@@ -244,60 +244,6 @@ void HeatShutup::HS_TS_ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 void HeatShutup::HS_TS_DISABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     TS_disable(makeCtx());
     log_ACTIVITY_LO_TSDisabled();
-    cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
-/**
- * @brief HS_SET_T5_THRESHOLD command handler.
- * Calls: configure_TS_T5_Charging_Threshold()
- */
-void HeatShutup::HS_SET_T5_THRESHOLD_cmdHandler(
-    FwOpcodeType opCode, U32 cmdSeq, BQ25756_TS_T5_prcnt threshold)
-{
-    configure_TS_T5_Charging_Threshold(makeCtx(), static_cast<TS_T5_prcnt>(threshold));
-    cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
-/**
- * @brief HS_SET_T3_THRESHOLD command handler.
- * Calls: configure_TS_T3_Charging_Threshold()
- */
-void HeatShutup::HS_SET_T3_THRESHOLD_cmdHandler(
-    FwOpcodeType opCode, U32 cmdSeq, BQ25756_TS_T3_prcnt threshold)
-{
-    configure_TS_T3_Charging_Threshold(makeCtx(), static_cast<TS_T3_prcnt>(threshold));
-    cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
-/**
- * @brief HS_SET_T2_THRESHOLD command handler.
- * Calls: configure_TS_T2_Charging_Threshold()
- */
-void HeatShutup::HS_SET_T2_THRESHOLD_cmdHandler(
-    FwOpcodeType opCode, U32 cmdSeq, BQ25756_TS_T2_prcnt threshold)
-{
-    configure_TS_T2_Charging_Threshold(makeCtx(), static_cast<TS_T2_prcnt>(threshold));
-    cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
-/**
- * @brief HS_SET_T1_THRESHOLD command handler.
- * Calls: configure_TS_T1_Charging_Threshold()
- */
-void HeatShutup::HS_SET_T1_THRESHOLD_cmdHandler(
-    FwOpcodeType opCode, U32 cmdSeq, BQ25756_TS_T1_prcnt threshold)
-{
-    configure_TS_T1_Charging_Threshold(makeCtx(), static_cast<TS_T1_prcnt>(threshold));
-    cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
-/**
- * @brief HS_RESET_THRESHOLDS command handler.
- * Calls: reset_TS_lvl()
- */
-void HeatShutup::HS_RESET_THRESHOLDS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    reset_TS_lvl(makeCtx());
-    log_ACTIVITY_LO_ThresholdsReset();
     cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

@@ -39,37 +39,14 @@ module BQ25756 {
         @ Enable JEITA temperature zone charging profile (CHARGE_REGION_CONT bit 1)
         guarded command HS_JEITA_ENABLE
 
-        @ Disable JEITA temperature zone charging profile
+        @ Disable JEITA temperature zone charging profile (CHARGE_REGION_CONT bit 1)
         guarded command HS_JEITA_DISABLE
 
         @ Enable TS pin thermistor function (CHARGE_REGION_CONT bit 0)
         guarded command HS_TS_ENABLE
 
-        @ Disable TS pin thermistor function
+        @ Disable TS pin thermistor function (CHARGE_REGION_CONT bit 0)
         guarded command HS_TS_DISABLE
-
-        @ Configure T5 zone threshold percentage (CHARGE_THRESH_CONT bits [7:6])
-        guarded command HS_SET_T5_THRESHOLD(
-            threshold: BQ25756.TS_T5_prcnt
-        )
-
-        @ Configure T3 zone threshold percentage (CHARGE_THRESH_CONT bits [5:4])
-        guarded command HS_SET_T3_THRESHOLD(
-            threshold: BQ25756.TS_T3_prcnt
-        )
-
-        @ Configure T2 zone threshold percentage (CHARGE_THRESH_CONT bits [3:2])
-        guarded command HS_SET_T2_THRESHOLD(
-            threshold: BQ25756.TS_T2_prcnt
-        )
-
-        @ Configure T1 zone threshold percentage (CHARGE_THRESH_CONT bits [1:0])
-        guarded command HS_SET_T1_THRESHOLD(
-            threshold: BQ25756.TS_T1_prcnt
-        )
-
-        @ Reset all TS thresholds to factory defaults
-        guarded command HS_RESET_THRESHOLDS
 
         # -------------------------------------------------------------------
         # Telemetry — updated every schedIn tick
@@ -110,10 +87,6 @@ module BQ25756 {
         event ThermalZoneChanged(zone: BQ25756.TS_LVL) \
             severity activity low \
             format "Thermal zone changed to {}"
-
-        event ThresholdsReset \
-            severity activity low \
-            format "TS thresholds reset to factory defaults"
 
         event I2cReadFailed(reg: U8, status: I32) \
             severity warning high \
